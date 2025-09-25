@@ -1,0 +1,1 @@
+enum CurrencyType { dollar, euro }
