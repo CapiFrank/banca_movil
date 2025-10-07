@@ -8,6 +8,7 @@ class IconText extends StatelessWidget {
   final VoidCallback onPressed;
   final IconPosition position;
   final EdgeInsetsGeometry padding;
+  final BorderRadiusGeometry? borderRadius;
 
   const IconText({
     super.key,
@@ -16,6 +17,7 @@ class IconText extends StatelessWidget {
     required this.onPressed,
     this.position = IconPosition.right,
     this.padding = const EdgeInsets.all(5),
+    this.borderRadius,
   });
 
   @override
@@ -48,7 +50,9 @@ class IconText extends StatelessWidget {
       iconAlignment: iconAlignment,
       style: TextButton.styleFrom(
         padding: padding,
-        shape: const RoundedRectangleBorder(),
+        shape: borderRadius != null
+            ? RoundedRectangleBorder(borderRadius: borderRadius!)
+            : const RoundedRectangleBorder(),
       ),
     );
   }

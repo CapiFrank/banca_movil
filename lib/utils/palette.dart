@@ -17,9 +17,11 @@ class Palette {
   Color get onSecondary => Theme.of(context).colorScheme.onSecondary;
   Color get onTertiary => Theme.of(context).colorScheme.onTertiary;
   Color get onSurface => Theme.of(context).colorScheme.onSurface;
-  Color get background => Colors.grey.shade200;
+  Color get background => Color(0xFFF6F6F8);
   Color get onBackground => Colors.black;
   Color get transparent => Colors.transparent;
+  Color get primaryText => surface;
+  TextTheme get textTheme => Theme.of(context).textTheme;
 
   ColorScheme get colorScheme => ColorScheme.fromSeed(
     seedColor: primary,

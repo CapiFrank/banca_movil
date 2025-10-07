@@ -1,3 +1,4 @@
+import 'package:banca_movil/utils/palette.dart';
 import 'package:flutter/material.dart';
 
 enum FlexDirection { horizontal, vertical }
@@ -174,7 +175,7 @@ class ElevatedFlexContainer extends StatelessWidget {
       onTap: onTap,
       child: Material(
         elevation: elevation,
-        color: color ?? Theme.of(context).colorScheme.surface,
+        color: color ?? Palette(context).surface,
         borderRadius: borderRadius,
         child: Container(
           padding: padding ?? _defaultPadding,

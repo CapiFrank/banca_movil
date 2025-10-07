@@ -1,6 +1,7 @@
 import 'package:banca_movil/utils/palette.dart';
 import 'package:banca_movil/views/components/elevated_flex_container.dart';
 import 'package:banca_movil/views/components/icon_text.dart';
+import 'package:banca_movil/views/components/indexed_navigation_bar.dart';
 import 'package:banca_movil/views/components/input_text.dart';
 import 'package:banca_movil/views/components/primary_button.dart';
 import 'package:banca_movil/views/components/section.dart';
@@ -22,6 +23,28 @@ class LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return BaseScaffold(
       backgroundColor: Palette(context).secondary,
+      bottomNavigationBar: IndexedNavigationBar(
+        selectedIndex: 3,
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              context.push('/exchange');
+              break;
+            case 1:
+              context.go('/join');
+              break;
+            case 2:
+              context.go('/help');
+              break;
+          }
+        },
+        backgroundColor: Palette(context).onSecondary,
+        items: [
+          BottomNavItemData(icon: Icons.swap_vert, label: 'Tipo de Cambio'),
+          BottomNavItemData(icon: Clarity.users_line, label: 'Unirse'),
+          BottomNavItemData(icon: Clarity.help_line, label: 'Ayuda'),
+        ],
+      ),
       body: SafeArea(
         child: SectionLayout(
           header: Section(
@@ -39,6 +62,7 @@ class LoginViewState extends State<LoginView> {
             child: Column(
               children: [
                 ElevatedFlexContainer.vertical(
+                  borderRadius: BorderRadius.circular(16),
                   children: [
                     Text(
                       '¡Bienvenido a su Banca Móvil!',
@@ -57,7 +81,7 @@ class LoginViewState extends State<LoginView> {
                         style: TextButton.styleFrom(
                           padding: const EdgeInsets.all(5),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.zero,
+                            borderRadius: BorderRadius.circular(8),
                           ),
                         ),
                         child: Text(
@@ -81,6 +105,7 @@ class LoginViewState extends State<LoginView> {
                     Align(
                       alignment: Alignment.center,
                       child: IconText(
+                        borderRadius: BorderRadius.circular(8),
                         icon: Icon(TeenyIcons.face_id, size: 20),
                         label: Text(
                           'o ingrese con Face ID',
@@ -95,72 +120,6 @@ class LoginViewState extends State<LoginView> {
                   ],
                 ),
               ],
-            ),
-          ),
-          footer: Section(
-            alignment: Alignment.bottomCenter,
-            child: IntrinsicHeight(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Palette(context).surface,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Palette(context).shadow,
-                            blurRadius: 10,
-                            offset: Offset(0, 5),
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: IconText(
-                                icon: Icon(Icons.swap_vert, size: 24),
-                                label: Text(
-                                  "Tipo de Cambio",
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                onPressed: () {
-                                  context.push('/exchange');
-                                },
-                                position: IconPosition.top,
-                              ),
-                            ),
-                            Expanded(
-                              child: IconText(
-                                icon: Icon(Clarity.users_line, size: 24),
-                                label: Text(
-                                  "Unirse",
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                onPressed: () {},
-                                position: IconPosition.top,
-                              ),
-                            ),
-                            Expanded(
-                              child: IconText(
-                                icon: Icon(Clarity.help_line, size: 24),
-                                label: Text(
-                                  "Ayuda",
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                onPressed: () {},
-                                position: IconPosition.top,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
             ),
           ),
         ),

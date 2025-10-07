@@ -36,53 +36,57 @@ class SelectableTabItem extends StatelessWidget {
         unselectedTextColor ?? Palette(context).primary;
 
     return Expanded(
-      child: AnimatedContainer(
-        duration: animationDuration,
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: isSelected ? effectivePrimaryColor : Colors.transparent,
-              width: borderWidth,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(12),
+        focusColor: effectivePrimaryColor.withValues(alpha: 0.1),
+        hoverColor: effectivePrimaryColor.withValues(alpha: 0.05),
+        splashColor: effectivePrimaryColor.withValues(alpha: 0.1),
+        highlightColor: effectivePrimaryColor.withValues(alpha: 0.1),
+        child: Container(
+          padding: padding ?? const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border(
+              bottom: BorderSide(
+                color: isSelected ? effectivePrimaryColor : Colors.transparent,
+                width: borderWidth,
+              ),
             ),
           ),
-        ),
-        child: TextButton(
-          style: TextButton.styleFrom(
-            shape: const RoundedRectangleBorder(),
-            padding: padding ?? const EdgeInsets.all(0),
-            minimumSize: Size.zero,
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          child: Center(
+            child:
+                child ??
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      title ?? '',
+                      style: TextStyle(
+                        color: isSelected
+                            ? effectivePrimaryColor
+                            : effectiveUnselectedColor,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      value ?? '',
+                      style: TextStyle(
+                        fontSize: valueFontSize,
+                        fontWeight: FontWeight.bold,
+                        color: isSelected
+                            ? effectivePrimaryColor
+                            : effectiveUnselectedColor,
+                      ),
+                    ),
+                  ],
+                ),
           ),
-          onPressed: onPressed,
-          child:
-              child ??
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    title ?? '',
-                    style: TextStyle(
-                      color: isSelected
-                          ? effectivePrimaryColor
-                          : effectiveUnselectedColor,
-                      fontWeight: isSelected
-                          ? FontWeight.w600
-                          : FontWeight.normal,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    value ?? '',
-                    style: TextStyle(
-                      fontSize: valueFontSize,
-                      fontWeight: FontWeight.bold,
-                      color: isSelected
-                          ? effectivePrimaryColor
-                          : effectiveUnselectedColor,
-                    ),
-                  ),
-                ],
-              ),
         ),
       ),
     );

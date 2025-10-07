@@ -2,7 +2,6 @@ import 'package:banca_movil/controllers/user_controller.dart';
 import 'package:banca_movil/views/components/info_card.dart';
 import 'package:banca_movil/views/layouts/scroll_layout.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:banca_movil/utils/utilities.dart';
 
@@ -34,25 +33,25 @@ class UserViewState extends State<UserView> {
     super.dispose();
   }
 
-  void _onSubmit(UserController userController) {
-    if (_nameController.text.isEmpty || _emailController.text.isEmpty) {
-      handleError('Por favor, completa todos los campos.');
-      return;
-    }
-    userController
-        .store(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: _nameController.text,
-          email: _emailController.text,
-        )
-        .then((_) {
-          _nameController.clear();
-          _emailController.clear();
-        })
-        .catchError((error) {
-          handleError('Error al agregar el cliente: $error');
-        });
-  }
+  // void _onSubmit(UserController userController) {
+  //   if (_nameController.text.isEmpty || _emailController.text.isEmpty) {
+  //     handleError('Por favor, completa todos los campos.');
+  //     return;
+  //   }
+  //   userController
+  //       .store(
+  //         id: DateTime.now().millisecondsSinceEpoch.toString(),
+  //         name: _nameController.text,
+  //         email: _emailController.text,
+  //       )
+  //       .then((_) {
+  //         _nameController.clear();
+  //         _emailController.clear();
+  //       })
+  //       .catchError((error) {
+  //         handleError('Error al agregar el cliente: $error');
+  //       });
+  // }
 
   @override
   Widget build(BuildContext context) {

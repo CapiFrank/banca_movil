@@ -4,19 +4,19 @@ import 'package:flutter/material.dart';
 Map<String, OutlineInputBorder> borders(BuildContext context) {
   return {
     'enabled': OutlineInputBorder(
-      borderRadius: BorderRadius.zero,
+      borderRadius: BorderRadius.circular(8),
       borderSide: BorderSide(color: Palette(context).primary),
     ),
     'focused': OutlineInputBorder(
-      borderRadius: BorderRadius.zero,
+      borderRadius: BorderRadius.circular(8),
       borderSide: BorderSide(color: Palette(context).primary),
     ),
     'error': OutlineInputBorder(
-      borderRadius: BorderRadius.zero,
+      borderRadius: BorderRadius.circular(8),
       borderSide: BorderSide(color: Palette(context).errorContainer),
     ),
     'focusedError': OutlineInputBorder(
-      borderRadius: BorderRadius.zero,
+      borderRadius: BorderRadius.circular(8),
       borderSide: BorderSide(color: Palette(context).error),
     ),
   };

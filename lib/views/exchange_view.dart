@@ -1,12 +1,12 @@
 import 'package:banca_movil/models/exchange_rate.dart';
 import 'package:banca_movil/utils/palette.dart';
 import 'package:banca_movil/views/components/elevated_flex_container.dart';
-import 'package:banca_movil/views/exchange_partials/converter_header.dart';
-import 'package:banca_movil/views/exchange_partials/currency_converter.dart';
-import 'package:banca_movil/views/exchange_partials/currency_converter_widget.dart';
-import 'package:banca_movil/views/exchange_partials/currency_selector.dart';
-import 'package:banca_movil/views/exchange_partials/currency_type.dart';
-import 'package:banca_movil/views/exchange_partials/exchange_rates_display.dart';
+import 'package:banca_movil/views/partials/exchange_partials/converter_header.dart';
+import 'package:banca_movil/views/partials/exchange_partials/currency_converter.dart';
+import 'package:banca_movil/views/partials/exchange_partials/currency_converter_widget.dart';
+import 'package:banca_movil/views/partials/exchange_partials/currency_selector.dart';
+import 'package:banca_movil/views/partials/exchange_partials/currency_type.dart';
+import 'package:banca_movil/views/partials/exchange_partials/exchange_rates_display.dart';
 import 'package:banca_movil/views/layouts/base_scaffold.dart';
 import 'package:banca_movil/views/layouts/scroll_layout.dart';
 import 'package:flutter/material.dart';
@@ -75,6 +75,7 @@ class _ExchangeViewState extends State<ExchangeView>
 
   Widget _buildExchangeContent(BuildContext context) {
     return ElevatedFlexContainer.sliverVertical(
+      borderRadius: BorderRadius.circular(16),
       padding: const EdgeInsets.only(
         left: 16.0,
         right: 16.0,
@@ -85,6 +86,7 @@ class _ExchangeViewState extends State<ExchangeView>
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(height: 8),
         ExchangeRatesDisplay(
           rates: _currentRates,
           isColonesToForeign: _isColonesToForeignCurrency,
@@ -119,7 +121,7 @@ class _ExchangeViewState extends State<ExchangeView>
         headerChild: _buildHeader(context),
         children: [
           _buildCurrencySelector(context),
-          SliverToBoxAdapter(child: SizedBox(height: 8.0)),
+          SliverToBoxAdapter(child: const SizedBox(height: 8.0)),
           _buildExchangeContent(context),
         ],
       ),

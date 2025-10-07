@@ -25,6 +25,7 @@ class ExchangeRatesDisplay extends StatelessWidget {
           isSelected: !isColonesToForeign,
           onPressed: onDirectionChanged,
         ),
+        SizedBox(width: 16.0),
         SelectableTabItem(
           title: "Venta",
           value: rates.sellRate.toStringAsFixed(2),

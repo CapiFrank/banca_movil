@@ -1,7 +1,7 @@
 import 'package:banca_movil/models/exchange_rate.dart';
 import 'package:banca_movil/views/components/flip_card.dart';
 import 'package:banca_movil/views/components/input_text.dart';
-import 'package:banca_movil/views/exchange_partials/currency_converter.dart';
+import 'package:banca_movil/views/partials/exchange_partials/currency_converter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

@@ -27,6 +27,7 @@ class PrimaryButton extends StatelessWidget {
               case ButtonState.pressed:
                 return BoxDecoration(
                   color: Palette(context).primary.withValues(alpha: 0.8),
+                  borderRadius: BorderRadius.circular(8),
                   boxShadow: [
                     BoxShadow(
                       color: Palette(context).shadow.withValues(alpha: 0.3),
@@ -38,6 +39,7 @@ class PrimaryButton extends StatelessWidget {
               case ButtonState.hover:
                 return BoxDecoration(
                   color: Palette(context).primary.withValues(alpha: 0.8),
+                  borderRadius: BorderRadius.circular(8),
                   boxShadow: [
                     BoxShadow(
                       color: Palette(context).shadow.withValues(alpha: 0.3),
@@ -49,6 +51,7 @@ class PrimaryButton extends StatelessWidget {
               case ButtonState.focused:
                 return BoxDecoration(
                   color: Palette(context).primary.withValues(alpha: 0.7),
+                  borderRadius: BorderRadius.circular(8),
                   boxShadow: [
                     BoxShadow(
                       color: Palette(context).shadow.withValues(alpha: 0.3),
@@ -60,6 +63,7 @@ class PrimaryButton extends StatelessWidget {
               case ButtonState.normal:
                 return BoxDecoration(
                   color: Palette(context).primary,
+                  borderRadius: BorderRadius.circular(8),
                   boxShadow: [
                     BoxShadow(
                       color: Palette(context).shadow.withValues(alpha: 0.3),

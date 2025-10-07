@@ -10,7 +10,6 @@ dependencies:
   animations: ^2.0.11
   bcrypt: ^1.1.3
   crypto: ^3.0.6
-  curved_labeled_navigation_bar: ^2.0.6
   encrypt: ^5.0.3
   flutter:
     sdk: flutter
@@ -34,7 +33,19 @@ scripts:
 
 flutter:
   uses-material-design: true
-  
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/inter_variable.ttf
+    - family: OpenSans
+      fonts:
+        - asset: assets/fonts/opensans_variable.ttf
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/montserrat_variable.ttf
+    - family: NotoSans
+      fonts:
+        - asset: assets/fonts/notosans_variable.ttf
   # assets:
   #   - assets/images/
   #   - assets/icons/

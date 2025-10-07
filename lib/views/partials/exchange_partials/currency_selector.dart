@@ -1,7 +1,7 @@
 import 'package:banca_movil/utils/palette.dart';
 import 'package:banca_movil/views/components/elevated_flex_container.dart';
 import 'package:banca_movil/views/components/selectable_tab_item.dart';
-import 'package:banca_movil/views/exchange_partials/currency_type.dart';
+import 'package:banca_movil/views/partials/exchange_partials/currency_type.dart';
 import 'package:flutter/material.dart';
 
 class CurrencySelector extends StatelessWidget {
