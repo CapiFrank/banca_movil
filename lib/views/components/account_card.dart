@@ -7,9 +7,17 @@ import 'package:icons_plus/icons_plus.dart';
 
 class AccountCard extends StatelessWidget {
   final Account account;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
+  final bool showTrailingIcon;
+  final EdgeInsets? margin;
 
-  const AccountCard({super.key, required this.account, required this.onTap});
+  const AccountCard({
+    super.key,
+    required this.account,
+    this.onTap,
+    this.showTrailingIcon = true,
+    this.margin,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +31,7 @@ class AccountCard extends StatelessWidget {
       ),
       title: Text(
         account.type,
-        style: textTheme.titleMedium?.copyWith(
-          color: Palette(context).primary,
-          fontWeight: FontWeight.w600,
-        ),
+        style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
       ),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,19 +66,21 @@ class AccountCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(width: 10),
-          Icon(
-            AntDesign.right_outline,
-            size: 16,
-            color: Palette(context).onSurface.withValues(alpha: 0.7),
-          ),
+          if (showTrailingIcon) const SizedBox(width: 10),
+          if (showTrailingIcon)
+            Icon(
+              AntDesign.right_outline,
+              size: 16,
+              fontWeight: FontWeight.bold,
+              color: Palette(context).onSurface.withValues(alpha: 0.3),
+            ),
         ],
       ),
     );
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      margin: margin ?? EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: IntrinsicHeight(child: cardContent),
     );
   }

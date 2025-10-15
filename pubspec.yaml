@@ -17,6 +17,7 @@ dependencies:
   go_router: ^16.2.1
   go_transitions: ^0.8.2
   icons_plus: ^5.0.0
+  lottie: ^3.3.2
   path_provider: ^2.1.5
   provider: ^6.1.5+1
 
@@ -46,6 +47,6 @@ flutter:
     - family: NotoSans
       fonts:
         - asset: assets/fonts/notosans_variable.ttf
-  # assets:
-  #   - assets/images/
-  #   - assets/icons/
+  assets:
+    - assets/lottie/
+    # - assets/icons/

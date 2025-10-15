@@ -41,7 +41,7 @@ class CurrencySelector extends StatelessWidget {
     required String text,
     required bool isSelected,
   }) {
-    return SelectableTabItem(
+    return SelectableTabItem.onHeader(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       isSelected: isSelected,
       onPressed: onCurrencyChanged,

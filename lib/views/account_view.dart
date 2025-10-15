@@ -1,4 +1,4 @@
-import 'package:banca_movil/views/partials/account_partials.dart/account_card.dart';
+import 'package:banca_movil/views/components/account_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:banca_movil/models/account.dart';
@@ -15,13 +15,13 @@ class _AccountViewState extends State<AccountView> {
   final List<Account> accounts = [
     Account(
       type: "Cuenta de Ahorros",
-      number: "123-456-789",
+      number: "CR050000000000123456789", // IBAN generado
       owner: "Juan Pérez",
       balance: "₡1,250,000.00",
     ),
     Account(
       type: "Cuenta de Ahorros",
-      number: "987-654-321",
+      number: "CR050000000000987654321", // IBAN generado
       owner: "Adriana Gómez",
       balance: "₡2,750,000.00",
     ),

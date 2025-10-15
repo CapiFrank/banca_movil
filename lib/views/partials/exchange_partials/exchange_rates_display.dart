@@ -1,4 +1,5 @@
 import 'package:banca_movil/models/exchange_rate.dart';
+import 'package:banca_movil/views/components/selectable_tab.dart';
 import 'package:banca_movil/views/components/selectable_tab_item.dart';
 import 'package:flutter/material.dart';
 
@@ -16,22 +17,21 @@ class ExchangeRatesDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return SelectableTab(
       children: [
         SelectableTabItem(
           title: "Compra",
           value: rates.buyRate.toStringAsFixed(2),
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
           isSelected: !isColonesToForeign,
           onPressed: onDirectionChanged,
+          margin: EdgeInsets.all(4),
         ),
-        SizedBox(width: 16.0),
         SelectableTabItem(
           title: "Venta",
           value: rates.sellRate.toStringAsFixed(2),
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
           isSelected: isColonesToForeign,
           onPressed: onDirectionChanged,
+          margin: EdgeInsets.all(4),
         ),
       ],
     );

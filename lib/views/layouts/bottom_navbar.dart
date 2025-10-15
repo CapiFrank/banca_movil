@@ -13,10 +13,7 @@ class BottomNavBar extends StatelessWidget {
       items: [
         BottomNavItemData(label: 'Inicio', icon: MingCute.home_4_fill),
         BottomNavItemData(label: 'Enviar', icon: Iconsax.send_2_outline),
-        BottomNavItemData(
-          label: 'Depositar',
-          icon: Iconsax.card_receive_outline,
-        ),
+        BottomNavItemData(label: 'Traer', icon: Iconsax.card_receive_outline),
         BottomNavItemData(label: 'Pagar', icon: MingCute.card_pay_line),
       ],
       selectedIndex: index,

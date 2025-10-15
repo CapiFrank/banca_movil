@@ -6,7 +6,7 @@ import 'package:banca_movil/utils/palette.dart';
 import 'package:banca_movil/views/components/base_card.dart';
 import 'package:banca_movil/views/components/categorize_item.dart';
 import 'package:banca_movil/views/components/square_avatar.dart';
-import 'package:banca_movil/views/partials/account_partials.dart/account_card.dart';
+import 'package:banca_movil/views/components/account_card.dart';
 import 'package:banca_movil/views/layouts/scroll_layout.dart';
 
 /// Enum para los filtros

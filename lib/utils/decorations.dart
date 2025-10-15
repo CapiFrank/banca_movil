@@ -5,11 +5,16 @@ Map<String, OutlineInputBorder> borders(BuildContext context) {
   return {
     'enabled': OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: Palette(context).primary),
+      borderSide: BorderSide(
+        color: Palette(context).primary.withValues(alpha: 0.2),
+      ),
     ),
     'focused': OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: Palette(context).primary),
+      borderSide: BorderSide(
+        color: Palette(context).primary.withValues(alpha: 0.7),
+        width: 2,
+      ),
     ),
     'error': OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
@@ -22,12 +27,8 @@ Map<String, OutlineInputBorder> borders(BuildContext context) {
   };
 }
 
-InputDecoration inputDarkDecoration({
-  required BuildContext context,
-  String? labelText,
-}) {
+InputDecoration inputDarkDecoration({required BuildContext context}) {
   return InputDecoration(
-    labelText: labelText,
     labelStyle: TextStyle(color: Palette(context).onSecondary),
     suffixIconColor: Palette(context).onSecondary,
     fillColor: Palette(context).secondary,
@@ -39,12 +40,8 @@ InputDecoration inputDarkDecoration({
   );
 }
 
-InputDecoration inputLightDecoration({
-  required BuildContext context,
-  String? labelText,
-}) {
+InputDecoration inputLightDecoration({required BuildContext context}) {
   return InputDecoration(
-    labelText: labelText,
     labelStyle: TextStyle(color: Palette(context).secondary),
     suffixIconColor: Palette(context).secondary,
     fillColor: Palette(context).onSecondary,
@@ -56,15 +53,11 @@ InputDecoration inputLightDecoration({
   );
 }
 
-InputDecoration inputDefaultDecoration({
-  required BuildContext context,
-  String? labelText,
-}) {
+InputDecoration inputDefaultDecoration({required BuildContext context}) {
   return InputDecoration(
-    labelText: labelText,
     filled: true,
     fillColor: Palette(context).surface,
-    labelStyle: TextStyle(color: Palette(context).primary),
+    labelStyle: TextStyle(color: Palette(context).shadow),
     enabledBorder: borders(context)['enabled'],
     focusedBorder: borders(context)['focused'],
     errorBorder: borders(context)['error'],
@@ -86,3 +79,8 @@ TextStyle textStyle({required BuildContext context}) {
     fontSize: 18,
   );
 }
+
+TextStyle sectionTitleStyle = TextStyle(
+  fontSize: 18,
+  fontWeight: FontWeight.bold,
+);

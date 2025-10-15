@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 class Palette {
   final BuildContext context;
   Palette(this.context);
-  Color get error => Theme.of(context).colorScheme.error;
+  Color get error => Color(0xFFEA2831);
   Color get outline => Theme.of(context).colorScheme.outline;
   Color get outlineVariant => Theme.of(context).colorScheme.outlineVariant;
   Color get errorContainer => Theme.of(context).colorScheme.errorContainer;
-  Color get primary => Color(0xFF22408A); // Default secondary color
-  Color get secondary => Color(0xFFC6D400); // Default primary color
+  Color get primary => Color(0xFF22408A);
+  //Colors.red; //Color(0xFF22408A); // Default secondary color
+  Color get secondary => Color(0xFFC6D400);
+  //Colors.orange; //Color(0xFFC6D400); // Default primary color
   Color get tertiary => Theme.of(context).colorScheme.tertiary;
   Color get surface => Colors.white;
   Color get shadow => Theme.of(context).colorScheme.shadow;

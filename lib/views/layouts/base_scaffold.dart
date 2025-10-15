@@ -1,3 +1,4 @@
+import 'package:banca_movil/utils/palette.dart';
 import 'package:flutter/material.dart';
 
 class BaseScaffold extends StatelessWidget {
@@ -22,13 +23,14 @@ class BaseScaffold extends StatelessWidget {
       onTap: () {
         FocusScope.of(context).unfocus(); // 🔹 Oculta el teclado
       },
-      behavior: HitTestBehavior.translucent, // Asegura que detecte taps en espacios vacíos
+      behavior: HitTestBehavior
+          .translucent, // Asegura que detecte taps en espacios vacíos
       child: Scaffold(
         appBar: appBar,
         body: body,
         floatingActionButton: floatingActionButton,
         bottomNavigationBar: bottomNavigationBar,
-        backgroundColor: backgroundColor,
+        backgroundColor: backgroundColor ?? Palette(context).background,
       ),
     );
   }

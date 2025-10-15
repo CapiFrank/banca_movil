@@ -1,4 +1,13 @@
-import 'package:banca_movil/views/partials/deposit_partials.dart/deposit_first_step.dart';
+import 'package:banca_movil/views/deposit/deposit_select_source_account.dart';
+import 'package:banca_movil/views/deposit/deposit_payment_info.dart';
+import 'package:banca_movil/views/deposit/deposit_review.dart';
+import 'package:banca_movil/views/transfer/transfer_payment_info.dart';
+import 'package:banca_movil/views/transfer/transfer_review.dart';
+import 'package:banca_movil/views/transfer/transfer_select_sinpe_account.dart';
+import 'package:banca_movil/views/transfer/transfer_select_sinpe_mobile_account.dart';
+import 'package:banca_movil/views/transfer/transfer_select_source_account.dart';
+import 'package:banca_movil/views/transfer/transfer_select_destination_account.dart';
+import 'package:banca_movil/views/transfer/transfer_select_destination_method.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -6,7 +15,7 @@ import 'package:banca_movil/models/account.dart';
 import 'package:banca_movil/utils/palette.dart';
 import 'package:banca_movil/views/partials/account_partials.dart/account_details.dart';
 import 'package:banca_movil/views/account_view.dart';
-import 'package:banca_movil/views/deposit_view.dart';
+import 'package:banca_movil/views/deposit/deposit_select_destination_account.dart';
 import 'package:banca_movil/views/exchange_view.dart';
 import 'package:banca_movil/views/layouts/base_scaffold.dart';
 import 'package:banca_movil/views/layouts/bottom_navbar.dart';
@@ -50,10 +59,52 @@ final appRoutes = [
     navIndex: 0,
   ),
   AppRoute(
-    path: '/deposit',
-    builder: (_, __) => const DepositView(),
+    path: '/transfer',
+    builder: (_, __) => const TransferSelectDestinationMethod(),
     showBottomNav: true,
-    navIndex: 2,
+    navIndex: 1,
+  ),
+  AppRoute(
+    path: '/transfer/selectsourceaccount',
+    builder: (_, state) {
+      final type = state.extra as DestinationMethod;
+      return TransferSelectSourceAccount(type: type);
+    },
+  ),
+  AppRoute(
+    path: '/transfer/selectdestinationaccount',
+    builder: (_, state) {
+      final account = state.extra as Account;
+      return TransferSelectDestinationAccount(sourceAccount: account);
+    },
+  ),
+  AppRoute(
+    path: '/transfer/selectsinpeaccount',
+    builder: (_, state) {
+      final account = state.extra as Account;
+      return TransferSelectSinpeAccount(sourceAccount: account);
+    },
+  ),
+  AppRoute(
+    path: '/transfer/selectsinpemobileaccount',
+    builder: (_, state) {
+      final account = state.extra as Account;
+      return TransferSelectSinpeMobileAccount(sourceAccount: account);
+    },
+  ),
+  AppRoute(
+    path: '/transfer/paymentinfo',
+    builder: (_, state) {
+      final params = state.extra as TransferPaymentInfoParams;
+      return TransferPaymentInfo(params: params);
+    },
+  ),
+  AppRoute(
+    path: '/transfer/review',
+    builder: (_, state) {
+      final params = state.extra as TransferReviewParams;
+      return TransferReview(params: params);
+    },
   ),
   AppRoute(
     path: '/account/details',
@@ -63,10 +114,30 @@ final appRoutes = [
     },
   ),
   AppRoute(
-    path: '/deposit/firststep',
+    path: '/deposit',
+    builder: (_, __) => const DepositSelectDestinationAccount(),
+    showBottomNav: true,
+    navIndex: 2,
+  ),
+  AppRoute(
+    path: '/deposit/selectsourceaccount',
     builder: (_, state) {
       final account = state.extra as Account;
-      return DepositFirstStep(account: account);
+      return DepositSelectSourceAccount(destinationAccount: account);
+    },
+  ),
+  AppRoute(
+    path: '/deposit/paymentinfo',
+    builder: (_, state) {
+      final params = state.extra as DepositPaymentInfoParams;
+      return DepositPaymentInfo(params: params);
+    },
+  ),
+  AppRoute(
+    path: '/deposit/review',
+    builder: (_, state) {
+      final params = state.extra as DepositReviewParams;
+      return DepositReview(params: params);
     },
   ),
 ];
@@ -103,6 +174,9 @@ final router = GoRouter(
                         case 0:
                           context.go('/account');
                           break;
+                        case 1:
+                          context.go('/transfer');
+                          break;
                         case 2:
                           context.go('/deposit');
                           break;
@@ -134,8 +208,7 @@ class ScaffoldWithBottomNav extends StatelessWidget {
       backgroundColor: Palette(context).background,
       body: body,
       bottomNavigationBar: FadeTransition(
-        opacity:
-            ModalRoute.of(context)?.animation ?? kAlwaysCompleteAnimation,
+        opacity: ModalRoute.of(context)?.animation ?? kAlwaysCompleteAnimation,
         child: bottomNavigationBar,
       ),
     );

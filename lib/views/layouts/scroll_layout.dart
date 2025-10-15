@@ -94,6 +94,7 @@ class ScrollLayout extends StatelessWidget {
     double? elevation,
     ScrollController? controller,
     String title = 'BMóvil',
+    ScrollPhysics? physics,
   }) {
     return ScrollLayout(
       key: key,
@@ -108,7 +109,7 @@ class ScrollLayout extends StatelessWidget {
       forceElevated: forceElevated,
       elevation: elevation,
       controller: controller,
-      physics: NeverScrollableScrollPhysics(),
+      physics: physics ?? NeverScrollableScrollPhysics(),
       headerChild: _Header(title: title),
     );
   }
