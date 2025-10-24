@@ -9,10 +9,9 @@ class RepositoryManager {
 
   static Repository<T> get<T extends Model<T>>(
     String table,
-    T Function(Map<String, dynamic>) fromJson,
   ) {
     if (!_repositories.containsKey(table)) {
-      _repositories[table] = JsonRepository<T>("db.json", fromJson);
+      _repositories[table] = JsonRepository<T>(baseUrl: 'http://192.168.110.15:3000/$table');
     }
     return _repositories[table] as Repository<T>;
   }

@@ -15,11 +15,11 @@ class Transaction extends Model<Transaction> {
     super.id,
     super.createdAt,
     super.updatedAt,
-    required this.description,
-    required this.status,
-    required this.amount,
-    required this.currency,
-    required this.type,
+    this.description = '',
+    this.status = TransactionStatus.blocked,
+    this.amount = 0.0,
+    this.currency = '',
+    this.type = TransactionType.income,
   });
 
   @override
@@ -49,13 +49,16 @@ class Transaction extends Model<Transaction> {
         (e) => e.name == json['type'],
         orElse: () => TransactionType.expense,
       ),
-      amount: json['amount'],
+      amount: (double.tryParse(json['amount'].toString()) ?? 0.0),
       currency: json['currency'],
-      createdAt: json['created_at'],
-      updatedAt: json['updated_at'],
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['updated_at']),
     );
   }
 
   @override
   String get table => "transactions";
+
+  @override
+  List<String>? get embedRelations => [];
 }

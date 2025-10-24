@@ -6,18 +6,20 @@ abstract class Model<T extends Model<T>> {
   dynamic createdAt;
   dynamic updatedAt;
   String get table;
+  List<String>? get embedRelations;
 
   Model({this.id, this.createdAt, this.updatedAt});
 
   Map<String, dynamic> toJson();
   T fromJson(Map<String, dynamic> json);
 
-  Repository<T> get repository => RepositoryManager.get<T>(table, fromJson);
+  Repository<T> get repository => RepositoryManager.get<T>(table);
 
   Future<void> create() async => repository.create(this as T);
-  Future<void> update() async => await repository.update(id as dynamic, this as T);
-  Future<void> delete() async => await repository.delete(id as dynamic, this as T);
-  
+  Future<void> update() async =>
+      await repository.update(id as dynamic, this as T);
+  Future<void> delete() async =>
+      await repository.delete(id as dynamic, this as T);
   Future<T?> find() => repository.find(this as T);
   Future<List<T>> all() => repository.all(this as T);
   Future<List<T>> where(bool Function(T) test) =>

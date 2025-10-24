@@ -1,13 +1,14 @@
 import 'package:banca_movil/utils/palette.dart';
-import 'package:banca_movil/views/components/elevated_flex_container.dart';
-import 'package:banca_movil/views/components/icon_text.dart';
-import 'package:banca_movil/views/components/indexed_navigation_bar.dart';
-import 'package:banca_movil/views/components/input_text.dart';
-import 'package:banca_movil/views/components/primary_button.dart';
-import 'package:banca_movil/views/components/section.dart';
-import 'package:banca_movil/views/layouts/base_scaffold.dart';
-import 'package:banca_movil/views/layouts/section_layout.dart';
+import 'package:banca_movil/views/components/primitives/elevated_flex_container.dart';
+import 'package:banca_movil/views/components/primitives/icon_text.dart';
+import 'package:banca_movil/views/components/primitives/indexed_navigation_bar.dart';
+import 'package:banca_movil/views/components/primitives/input_text.dart';
+import 'package:banca_movil/views/components/composites/primary_button.dart';
+import 'package:banca_movil/views/components/primitives/section.dart';
+import 'package:banca_movil/views/components/layouts/base_scaffold.dart';
+import 'package:banca_movil/views/components/layouts/section_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -19,6 +20,27 @@ class LoginView extends StatefulWidget {
 }
 
 class LoginViewState extends State<LoginView> {
+  final _citizenNumberController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool get _isValid {
+    return _citizenNumberController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty;
+  }
+@override
+  void initState() {
+    super.initState();
+    _passwordController.addListener(_refresh);
+    _citizenNumberController.addListener(_refresh);
+  }
+
+  @override
+  void dispose() {
+    _citizenNumberController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+  void _refresh() => setState(() {});
+
   @override
   Widget build(BuildContext context) {
     return BaseScaffold(
@@ -72,9 +94,21 @@ class LoginViewState extends State<LoginView> {
                       ),
                     ),
                     SizedBox(height: 16),
-                    InputText(labelText: 'Usuario'),
+                    InputText(
+                      labelText: 'Usuario',
+                      textEditingController: _citizenNumberController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
+                      textInputAction: TextInputAction.next,
+                    ),
                     SizedBox(height: 16),
-                    InputText(labelText: 'Contraseña', obscureText: true),
+                    InputText(
+                      labelText: 'Contraseña',
+                      obscureText: true,
+                      textEditingController: _passwordController,
+                    ),
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
@@ -97,6 +131,7 @@ class LoginViewState extends State<LoginView> {
                     ),
                     PrimaryButton(
                       labelText: "Iniciar Sesión",
+                      isEnabled: _isValid,
                       onPressed: () {
                         context.go('/account');
                       },

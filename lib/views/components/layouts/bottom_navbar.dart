@@ -1,4 +1,4 @@
-import 'package:banca_movil/views/components/indexed_navigation_bar.dart';
+import 'package:banca_movil/views/components/primitives/indexed_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 

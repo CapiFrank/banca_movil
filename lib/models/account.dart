@@ -1,37 +1,57 @@
+import 'package:banca_movil/models/user.dart';
 import 'package:banca_movil/utils/model.dart';
+
+enum AccountType { checking, savings }
 
 class Account extends Model<Account> {
   @override
   String get table => "accounts";
 
-  final String type;
-  final String number;
-  final String owner;
-  final String balance;
+  final AccountType type;
+  final String accountNumber;
+  final String ibanNumber;
+  final String userId;
+  final double balance;
+  final String currency;
+  final User? user;
 
   Account({
     super.id,
-    required this.type,
-    required this.number,
-    required this.owner,
-    required this.balance,
+    this.type = AccountType.savings,
+    this.accountNumber = '',
+    this.ibanNumber = '',
+    this.userId = '',
+    this.balance = 0.0,
+    this.currency = '',
+    this.user,
   });
 
   @override
   Map<String, dynamic> toJson() => {
     "id": id,
-    "type": type,
-    "number": number,
-    "owner": owner,
+    "type": type.name,
+    "account_number": accountNumber,
+    "iban_number": ibanNumber,
+    "userId": userId,
     "balance": balance,
+    "currency": currency,
   };
 
   @override
   Account fromJson(Map<String, dynamic> json) => Account(
     id: json["id"],
-    type: json["type"],
-    number: json["number"],
-    owner: json["owner"],
-    balance: json["balance"],
+    type: AccountType.values.firstWhere(
+      (e) => e.name == json['type'],
+      orElse: () => AccountType.savings,
+    ),
+    accountNumber: json["account_number"],
+    ibanNumber: json["iban_number"],
+    userId: json["userId"],
+    balance: (double.tryParse(json['balance'].toString()) ?? 0.0),
+    currency: json["currency"],
+    user: User().fromJson(json["user"]),
   );
+
+  @override
+  List<String>? get embedRelations => ['user'];
 }

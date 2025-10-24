@@ -34,4 +34,7 @@ class ExchangeRate extends Model<ExchangeRate> {
 
   @override
   String get table => "exchange_rates";
+
+  @override
+  List<String>? get embedRelations => [];
 }

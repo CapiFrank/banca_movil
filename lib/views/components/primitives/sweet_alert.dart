@@ -1,7 +1,7 @@
 import 'package:banca_movil/utils/palette.dart';
-import 'package:banca_movil/views/components/primary_button.dart';
-import 'package:banca_movil/views/components/responsive_actions.dart';
-import 'package:banca_movil/views/components/secondary_button.dart';
+import 'package:banca_movil/views/components/composites/primary_button.dart';
+import 'package:banca_movil/views/components/primitives/responsive_actions.dart';
+import 'package:banca_movil/views/components/composites/secondary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 

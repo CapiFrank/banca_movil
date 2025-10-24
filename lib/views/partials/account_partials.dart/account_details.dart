@@ -1,13 +1,14 @@
+import 'package:banca_movil/models/transfer.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:banca_movil/models/account.dart';
 import 'package:banca_movil/models/transaction.dart';
 import 'package:banca_movil/utils/palette.dart';
-import 'package:banca_movil/views/components/base_card.dart';
-import 'package:banca_movil/views/components/categorize_item.dart';
-import 'package:banca_movil/views/components/square_avatar.dart';
-import 'package:banca_movil/views/components/account_card.dart';
-import 'package:banca_movil/views/layouts/scroll_layout.dart';
+import 'package:banca_movil/views/components/primitives/base_card.dart';
+import 'package:banca_movil/views/components/primitives/categorize_item.dart';
+import 'package:banca_movil/views/components/primitives/square_avatar.dart';
+import 'package:banca_movil/views/components/composites/account_card.dart';
+import 'package:banca_movil/views/components/layouts/scroll_layout.dart';
 
 /// Enum para los filtros
 enum TransactionFilter { all, applied, blocked }
@@ -21,25 +22,39 @@ class AccountDetails extends StatefulWidget {
 }
 
 class _AccountDetailsState extends State<AccountDetails> {
-  late final List<TransactionGroup> groups;
+  late List<TransactionGroup> groups = [];
   TransactionFilter _filter = TransactionFilter.all;
+
+  Future<void> _loadTransactions() async {
+    final accountId = widget.account.id;
+    final relatedTransfers = await Transfer().where(
+      (element) =>
+          element.sourceAccountId == accountId ||
+          element.destinationAccountId == accountId,
+    );
+    final accountTransactions = relatedTransfers
+        .where((t) => t.transaction != null)
+        .map((t) => t.transaction!)
+        .toList();
+    final now = DateTime.now();
+    final recentTransactions = accountTransactions
+        .where((t) => now.difference(t.createdAt).inHours < 24)
+        .toList();
+    final olderTransactions = accountTransactions
+        .where((t) => now.difference(t.createdAt).inHours >= 24)
+        .toList();
+    setState(() {
+      groups = [
+        TransactionGroup(title: "Recientes", items: recentTransactions),
+        TransactionGroup(title: "Anteriores", items: olderTransactions),
+      ];
+    });
+  }
 
   @override
   void initState() {
+    _loadTransactions();
     super.initState();
-
-    final now = DateTime.now();
-    final recentTransactions = transactions
-        .where((t) => now.difference(t.createdAt).inHours < 24)
-        .toList();
-    final olderTransactions = transactions
-        .where((t) => now.difference(t.createdAt).inHours >= 24)
-        .toList();
-
-    groups = [
-      TransactionGroup(title: "Recientes", items: recentTransactions),
-      TransactionGroup(title: "Anteriores", items: olderTransactions),
-    ];
   }
 
   @override
@@ -260,114 +275,3 @@ class TransactionGroup {
 
   TransactionGroup({required this.title, required this.items});
 }
-
-final List<Transaction> transactions = [
-  Transaction(
-    id: '1',
-    description: "Compra en supermercado",
-    status: TransactionStatus.blocked,
-    type: TransactionType.expense,
-    amount: 15000.00,
-    currency: "CRC",
-    createdAt: DateTime.parse("2025-10-07T08:30:00Z"),
-  ),
-  Transaction(
-    id: '2',
-    description: "Pago en línea Netflix",
-    status: TransactionStatus.applied,
-    type: TransactionType.expense,
-    amount: 5000.00,
-    currency: "CRC",
-    createdAt: DateTime.parse("2025-10-07T20:15:00Z"),
-  ),
-  Transaction(
-    id: '3',
-    description: "Transferencia recibida",
-    status: TransactionStatus.applied,
-    type: TransactionType.income,
-    amount: 1000.00,
-    currency: "USD",
-    createdAt: DateTime.parse("2025-10-07T12:00:00Z"),
-  ),
-  Transaction(
-    id: '4',
-    description: "Compra en tienda de ropa",
-    status: TransactionStatus.applied,
-    type: TransactionType.expense,
-    amount: 2500.00,
-    currency: "CRC",
-    createdAt: DateTime.parse("2025-09-28T16:45:00Z"),
-  ),
-  Transaction(
-    id: '5',
-    description: "Cena en restaurante",
-    status: TransactionStatus.applied,
-    type: TransactionType.expense,
-    amount: 8000.00,
-    currency: "CRC",
-    createdAt: DateTime.parse("2025-10-06T01:15:00Z"),
-  ),
-  Transaction(
-    id: '6',
-    description: "Compra en Amazon",
-    status: TransactionStatus.blocked,
-    type: TransactionType.expense,
-    amount: 20000.00,
-    currency: "CRC",
-    createdAt: DateTime.parse("2025-10-06T07:45:00Z"),
-  ),
-  Transaction(
-    id: '7',
-    description: "Pago hotel en Miami",
-    status: TransactionStatus.applied,
-    type: TransactionType.expense,
-    amount: 300.00,
-    currency: "USD",
-    createdAt: DateTime.parse("2025-09-20T15:10:00Z"),
-  ),
-  Transaction(
-    id: '8',
-    description: "Depósito en cajero",
-    status: TransactionStatus.applied,
-    type: TransactionType.income,
-    amount: 12000.00,
-    currency: "CRC",
-    createdAt: DateTime.parse("2025-10-04T11:00:00Z"),
-  ),
-  Transaction(
-    id: '9',
-    description: "Pago gasolina",
-    status: TransactionStatus.applied,
-    type: TransactionType.expense,
-    amount: 3500.00,
-    currency: "CRC",
-    createdAt: DateTime.parse("2025-10-06T09:20:00Z"),
-  ),
-  Transaction(
-    id: '10',
-    description: "Spotify Premium",
-    status: TransactionStatus.applied,
-    type: TransactionType.expense,
-    amount: 2500.00,
-    currency: "CRC",
-    createdAt: DateTime.parse("2025-10-03T18:00:00Z"),
-  ),
-  Transaction(
-    id: '11',
-    description: "Compra en eBay",
-    status: TransactionStatus.blocked,
-    type: TransactionType.expense,
-    amount: 75.50,
-    currency: "USD",
-    createdAt: DateTime.parse("2025-10-06T02:10:00Z"),
-  ),
-  Transaction(
-    id: '12',
-    description: "Compra en ferretería",
-    status: TransactionStatus.applied,
-    type: TransactionType.expense,
-    amount: 4500.00,
-    currency: "CRC",
-    createdAt: DateTime.parse("2025-09-15T09:30:00Z"),
-  ),
-];

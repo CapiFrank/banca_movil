@@ -1,19 +1,19 @@
 import 'package:banca_movil/models/account.dart';
 import 'package:banca_movil/models/favorite_account.dart';
-import 'package:banca_movil/utils/decorations.dart';
+import 'package:banca_movil/utils/styles.dart';
 import 'package:banca_movil/utils/palette.dart';
 import 'package:banca_movil/utils/use_state.dart';
-import 'package:banca_movil/views/components/base_card.dart';
-import 'package:banca_movil/views/components/input_text.dart';
-import 'package:banca_movil/views/components/primary_button.dart';
-import 'package:banca_movil/views/components/primary_checkbox.dart';
-import 'package:banca_movil/views/components/selectable_tab.dart';
-import 'package:banca_movil/views/components/selectable_tab_item.dart';
-import 'package:banca_movil/views/components/square_avatar.dart';
-import 'package:banca_movil/views/components/sweet_alert.dart';
-import 'package:banca_movil/views/layouts/base_scaffold.dart';
-import 'package:banca_movil/views/layouts/scroll_layout.dart';
-import 'package:banca_movil/views/components/account_card.dart';
+import 'package:banca_movil/views/components/composites/section_card.dart';
+import 'package:banca_movil/views/components/primitives/input_text.dart';
+import 'package:banca_movil/views/components/composites/primary_button.dart';
+import 'package:banca_movil/views/components/composites/primary_checkbox.dart';
+import 'package:banca_movil/views/components/primitives/selectable_tab.dart';
+import 'package:banca_movil/views/components/primitives/selectable_tab_item.dart';
+import 'package:banca_movil/views/components/primitives/square_avatar.dart';
+import 'package:banca_movil/views/components/primitives/sweet_alert.dart';
+import 'package:banca_movil/views/components/layouts/base_scaffold.dart';
+import 'package:banca_movil/views/components/layouts/scroll_layout.dart';
+import 'package:banca_movil/views/components/composites/account_card.dart';
 import 'package:banca_movil/views/transfer/transfer_payment_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -208,24 +208,14 @@ class _TransferSelectDestinationAccountState
         itemCount: favoriteAccounts.length,
         itemBuilder: (context, index) {
           final account = favoriteAccounts[index];
-          return BaseCard(
-            onTap: () {
-              _navigateToPaymentInfo(account);
-            },
+          return SectionCard(
+            wrapperType: WrapperType.normal,
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            leading: SquareAvatar(
-              child: Icon(
-                Clarity.bank_solid,
-                color: Palette(context).primary,
-                size: 24,
-              ),
-            ),
-            title: Text(
-              account.fullName,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-            subtitle: Text(account.accountNumber),
+            title: account.fullName,
+            subtitle: account.accountNumber,
+            icon: Clarity.bank_solid,
             trailing: _buildRemoveFavoriteButton(),
+            onTap: () => _navigateToPaymentInfo(account),
           );
         },
       ),

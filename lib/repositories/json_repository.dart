@@ -1,146 +1,136 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:banca_movil/utils/model.dart';
-import 'package:path_provider/path_provider.dart';
-import 'repository.dart';
+import 'package:http/http.dart' as http;
+import 'repository.dart'; // tu clase abstracta base
 
+/// Implementación genérica del repositorio para JSON Server
 class JsonRepository<T extends Model<T>> implements Repository<T> {
-  final String dbPath;
-  final T Function(Map<String, dynamic>) fromJson;
-  final bool prettyPrint; // útil en desarrollo
+  final String baseUrl;
 
-  JsonRepository(this.dbPath, this.fromJson, {this.prettyPrint = false});
+  JsonRepository({required this.baseUrl});
 
-  Future<Map<String, dynamic>> _readDb() async {
-    final dir = await getExternalStorageDirectory();
-    final file = File('${dir!.path}/$dbPath');
+  /// Obtiene todos los registros de la tabla
 
-    if (!await file.exists()) {
-      await file.writeAsString(jsonEncode({})); // Inicializar vacío
-      return {};
-    }
+  String buildEmbedQuery(T model) {
+    final relations = model.embedRelations;
+    if (relations == null || relations.isEmpty) return '';
 
-    final content = await file.readAsString();
-    if (content.trim().isEmpty) {
-      return {};
-    }
-
-    return jsonDecode(content) as Map<String, dynamic>;
-  }
-
-  Future<void> _writeDb(Map<String, dynamic> db) async {
-    final dir = await getExternalStorageDirectory();
-    final file = File('${dir!.path}/$dbPath');
-    final encoder = prettyPrint
-        ? JsonEncoder.withIndent("  ")
-        : const JsonEncoder();
-    await file.writeAsString(encoder.convert(db));
-  }
-
-  Future<List<T>> _loadAll(String table) async {
-    final db = await _readDb();
-    final data = db[table] as List<dynamic>? ?? [];
-    return data.map((e) => fromJson(e as Map<String, dynamic>)).toList();
-  }
-
-  Future<void> _saveAll(String table, List<T> items) async {
-    final db = await _readDb();
-    db[table] = items.map((e) => e.toJson()).toList();
-    await _writeDb(db);
+    // Crea un solo string como "?_embed=relation1&_embed=relation2"
+    final query = relations.map((r) => '_embed=$r').join('&');
+    return '?$query';
   }
 
   @override
-  Future<List<T>> all(T model) => _loadAll(model.table);
-
-  @override
-  Future<void> create(T model) async {
-    final items = await _loadAll(model.table);
-    items.add(model);
-    await _saveAll(model.table, items);
-  }
-
-  @override
-  Future<void> update(String id, T newItem) async {
-    final items = await _loadAll(newItem.table);
-    final index = items.indexWhere((e) => e.id == id);
-
-    if (index == -1) {
-      throw Exception("⚠️ Item with id $id not found in ${newItem.table}");
+  Future<List<T>> all(T model) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl${buildEmbedQuery(model)}'),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Error al obtener los registros');
     }
-
-    items[index] = newItem;
-    await _saveAll(newItem.table, items);
+    final List<dynamic> data = jsonDecode(response.body);
+    return data.map((e) => model.fromJson(e)).toList();
   }
 
-  @override
-  Future<void> delete(String id, T model) async {
-    final items = await _loadAll(model.table);
-    final updatedItems = items.where((e) => e.id != id).toList();
-
-    if (items.length == updatedItems.length) {
-      throw Exception("⚠️ Item with id $id not found in ${model.table}");
-    }
-
-    await _saveAll(model.table, updatedItems);
-  }
-
+  /// Busca un registro por ID
   @override
   Future<T?> find(T model) async {
-    final items = await _loadAll(model.table);
+    final id = (model.toJson()['id']);
+    if (id == null) return null;
+
+    final response = await http.get(Uri.parse('$baseUrl/$id'));
+    if (response.statusCode == 200) {
+      return model.fromJson(jsonDecode(response.body));
+    }
+    return null;
+  }
+
+  /// Filtra registros localmente (tras obtener todos)
+  @override
+  Future<List<T>> where(bool Function(T) where, T model) async {
+    final items = await all(model);
+    return items.where(where).toList();
+  }
+
+  /// Retorna el primer registro que cumpla la condición
+  @override
+  Future<T?> firstWhere(bool Function(T) where, T model) async {
+    final items = await all(model);
     try {
-      return items.firstWhere((item) => item.id == model.id);
+      return items.firstWhere(where);
     } catch (_) {
       return null;
     }
   }
 
+  /// Verifica si existe al menos un registro que cumpla la condición
   @override
-  Future<List<T>> where(bool Function(T) test, T model) async {
-    final items = await _loadAll(model.table);
-    return items.where(test).toList();
+  Future<bool> exists(bool Function(T) where, T model) async {
+    final items = await all(model);
+    return items.any(where);
   }
 
-  @override
-  Future<T?> firstWhere(bool Function(T) test, T model) async {
-    final items = await _loadAll(model.table);
-    try {
-      return items.firstWhere(test);
-    } catch (_) {
-      return null;
-    }
-  }
-
-  @override
-  Future<bool> exists(bool Function(T) test, T model) async {
-    final items = await _loadAll(model.table);
-    return items.any(test);
-  }
-
+  /// Ordena los registros localmente
   @override
   Future<List<T>> orderBy(
     Comparable Function(T) key,
     T model, {
     bool descending = false,
   }) async {
-    final items = await _loadAll(model.table);
-    final sorted = [...items]
-      ..sort(
-        (a, b) =>
-            descending ? key(b).compareTo(key(a)) : key(a).compareTo(key(b)),
-      );
-    return sorted;
+    final items = await all(model);
+    items.sort((a, b) {
+      final compare = key(a).compareTo(key(b));
+      return descending ? -compare : compare;
+    });
+    return items;
   }
 
+  /// Limita el número de registros
   @override
   Future<List<T>> limit(int count, T model) async {
-    final items = await _loadAll(model.table);
+    final items = await all(model);
     return items.take(count).toList();
   }
 
+  /// Devuelve la cantidad total de registros
   @override
   Future<int> count(T model) async {
-    final items = await _loadAll(model.table);
+    final items = await all(model);
     return items.length;
+  }
+
+  /// Crea un nuevo registro
+  @override
+  void create(T item) async {
+    final response = await http.post(
+      Uri.parse(baseUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(item.toJson()),
+    );
+    if (response.statusCode != 201) {
+      throw Exception('Error al crear el registro');
+    }
+  }
+
+  /// Actualiza un registro existente
+  @override
+  Future<void> update(String id, T newItem) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/$id'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(newItem.toJson()),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Error al actualizar el registro');
+    }
+  }
+
+  /// Elimina un registro por ID
+  @override
+  Future<void> delete(String id, T model) async {
+    final response = await http.delete(Uri.parse('$baseUrl/$id'));
+    if (response.statusCode != 200) {
+      throw Exception('Error al eliminar el registro');
+    }
   }
 }

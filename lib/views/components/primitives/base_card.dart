@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:banca_movil/views/components/elevated_flex_container.dart';
+import 'package:banca_movil/views/components/primitives/elevated_flex_container.dart';
 
 class BaseCard extends StatelessWidget {
   final Widget? leading;
@@ -21,7 +21,7 @@ class BaseCard extends StatelessWidget {
     this.onTap,
     this.margin,
     this.padding = const EdgeInsets.all(16),
-    this.elevation = 1,
+    this.elevation = 0.05,
     this.borderRadius = const BorderRadius.all(Radius.circular(8)),
   });
 

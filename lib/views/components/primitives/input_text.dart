@@ -1,5 +1,5 @@
-import 'package:banca_movil/utils/decorations.dart';
 import 'package:banca_movil/utils/palette.dart';
+import 'package:banca_movil/utils/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -111,45 +111,64 @@ class NumberInputFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    String newText = newValue.text.replaceAll(RegExp(r'[^0-9.]'), '');
+    String newText = newValue.text;
 
     if (newText.isEmpty) {
       return newValue.copyWith(text: '');
     }
 
-    // Separamos parte entera y decimal
-    List<String> parts = newText.split('.');
-    String integerPart = parts[0];
-    String decimalPart = parts.length > 1 ? parts[1] : '';
-
-    // Limitar decimales
-    if (decimalRange > 0 && decimalPart.length > decimalRange) {
-      decimalPart = decimalPart.substring(0, decimalRange);
-    }
-
-    // Agregamos separadores de miles
-    String formattedInteger = '';
-    for (int i = 0; i < integerPart.length; i++) {
-      int positionFromEnd = integerPart.length - i;
-      formattedInteger += integerPart[i];
-      if (positionFromEnd > 1 && positionFromEnd % 3 == 1) {
-        formattedInteger += ',';
-      }
-    }
-
-    // Construimos el número final
-    String formatted = formattedInteger;
-    if (decimalPart.isNotEmpty) {
-      formatted += '.$decimalPart';
-    } else {
-      if (newText.endsWith('.')) {
-        formatted += '.';
-      }
-    }
+    String formatted = formatNumberString(
+      newValue.text,
+      decimalRange: decimalRange,
+    );
 
     return TextEditingValue(
       text: formatted,
       selection: TextSelection.collapsed(offset: formatted.length),
     );
   }
+}
+
+enum InputBorderType { enabled, focused, error, focusedError }
+
+OutlineInputBorder inputBorder(BuildContext context, InputBorderType type) {
+  switch (type) {
+    case InputBorderType.enabled:
+      return OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(
+          color: Palette(context).primary.withValues(alpha: 0.2),
+        ),
+      );
+    case InputBorderType.focused:
+      return OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(
+          color: Palette(context).primary.withValues(alpha: 0.7),
+          width: 2,
+        ),
+      );
+    case InputBorderType.error:
+      return OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Palette(context).errorContainer),
+      );
+    case InputBorderType.focusedError:
+      return OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Palette(context).error),
+      );
+  }
+}
+
+InputDecoration inputDefaultDecoration({required BuildContext context}) {
+  return InputDecoration(
+    filled: true,
+    fillColor: Palette(context).surface,
+    labelStyle: TextStyle(color: Palette(context).shadow),
+    enabledBorder: inputBorder(context, InputBorderType.enabled),
+    focusedBorder: inputBorder(context, InputBorderType.focused),
+    errorBorder: inputBorder(context, InputBorderType.error),
+    focusedErrorBorder: inputBorder(context, InputBorderType.focusedError),
+  );
 }

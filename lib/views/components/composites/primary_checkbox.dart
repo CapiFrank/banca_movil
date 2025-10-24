@@ -1,6 +1,6 @@
 import 'package:banca_movil/utils/palette.dart';
-import 'package:banca_movil/views/components/intrinsic_size.dart';
-import 'package:banca_movil/views/components/square_avatar.dart';
+import 'package:banca_movil/views/components/primitives/intrinsic_size.dart';
+import 'package:banca_movil/views/components/primitives/square_avatar.dart';
 import 'package:flutter/material.dart';
 
 class PrimaryCheckbox extends StatelessWidget {

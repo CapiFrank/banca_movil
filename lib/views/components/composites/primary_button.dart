@@ -1,37 +1,37 @@
 import 'package:banca_movil/utils/palette.dart';
-import 'package:banca_movil/views/components/button.dart';
+import 'package:banca_movil/views/components/primitives/button.dart';
 import 'package:flutter/material.dart';
 
-class SecondaryButton extends StatelessWidget {
-  const SecondaryButton({
+class PrimaryButton extends StatelessWidget {
+  const PrimaryButton({
     super.key,
     required this.labelText,
     required this.onPressed,
     this.decorationBuilder,
     this.textStyleBuilder,
+    this.isEnabled = true,
   });
 
   final String labelText;
   final Function() onPressed;
   final BoxDecoration Function(ButtonState state)? decorationBuilder;
   final TextStyle Function(ButtonState state)? textStyleBuilder;
+  final bool isEnabled;
 
   @override
   Widget build(BuildContext context) {
     return Button(
-      onPressed: onPressed,
+      onPressed: isEnabled ? onPressed : () {},
       decorationBuilder:
           decorationBuilder ??
           (state) {
             switch (state) {
               case ButtonState.pressed:
                 return BoxDecoration(
-                  color: Palette(context).onPrimary,
+                  color: isEnabled
+                      ? Palette(context).primary.withValues(alpha: 0.9)
+                      : Palette(context).primary.withValues(alpha: 0.7),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: Palette(context).primary.withValues(alpha: 0.8),
-                    width: 2,
-                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Palette(context).shadow.withValues(alpha: 0.3),
@@ -42,12 +42,8 @@ class SecondaryButton extends StatelessWidget {
                 );
               case ButtonState.hover:
                 return BoxDecoration(
-                  color: Palette(context).onPrimary,
+                  color: Palette(context).primary.withValues(alpha: 0.7),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: Palette(context).primary.withValues(alpha: 0.6),
-                    width: 2,
-                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Palette(context).shadow.withValues(alpha: 0.3),
@@ -58,12 +54,8 @@ class SecondaryButton extends StatelessWidget {
                 );
               case ButtonState.focused:
                 return BoxDecoration(
-                  color: Palette(context).onPrimary,
+                  color: Palette(context).primary.withValues(alpha: 0.7),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: Palette(context).primary.withValues(alpha: 0.6),
-                    width: 2,
-                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Palette(context).shadow.withValues(alpha: 0.3),
@@ -74,9 +66,10 @@ class SecondaryButton extends StatelessWidget {
                 );
               case ButtonState.normal:
                 return BoxDecoration(
-                  color: Palette(context).onPrimary,
+                  color: isEnabled
+                      ? Palette(context).primary
+                      : Palette(context).primary.withValues(alpha: 0.7),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Palette(context).primary, width: 2),
                   boxShadow: [
                     BoxShadow(
                       color: Palette(context).shadow.withValues(alpha: 0.3),
@@ -89,35 +82,15 @@ class SecondaryButton extends StatelessWidget {
           },
       textStyleBuilder:
           textStyleBuilder ??
-          (state) {
-            switch (state) {
-              case ButtonState.pressed:
-                return TextStyle(
-                  color: Palette(context).primary.withValues(alpha: 0.8),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                );
-              case ButtonState.hover:
-                return TextStyle(
-                  color: Palette(context).primary.withValues(alpha: 0.6),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                );
-              case ButtonState.focused:
-                return TextStyle(
-                  color: Palette(context).primary.withValues(alpha: 0.6),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                );
-              case ButtonState.normal:
-                return TextStyle(
-                  color: Palette(context).primary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                );
-            }
-          },
-      child: Text(labelText),
+          (state) => TextStyle(
+            color: Palette(context).onPrimary,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+      child: Padding(
+        padding: EdgeInsetsGeometry.symmetric(vertical: 2, horizontal: 2),
+        child: Text(labelText),
+      ),
     );
   }
 }

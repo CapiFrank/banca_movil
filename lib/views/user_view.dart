@@ -1,6 +1,6 @@
 import 'package:banca_movil/controllers/user_controller.dart';
-import 'package:banca_movil/views/components/info_card.dart';
-import 'package:banca_movil/views/layouts/scroll_layout.dart';
+import 'package:banca_movil/views/components/primitives/info_card.dart';
+import 'package:banca_movil/views/components/layouts/scroll_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:banca_movil/utils/utilities.dart';

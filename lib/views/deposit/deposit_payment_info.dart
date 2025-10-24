@@ -1,14 +1,14 @@
 import 'package:banca_movil/models/account.dart';
 import 'package:banca_movil/models/favorite_account.dart';
-import 'package:banca_movil/utils/decorations.dart';
+import 'package:banca_movil/utils/styles.dart';
 import 'package:banca_movil/utils/palette.dart';
-import 'package:banca_movil/views/components/base_card.dart';
-import 'package:banca_movil/views/components/input_text.dart';
-import 'package:banca_movil/views/components/primary_button.dart';
-import 'package:banca_movil/views/components/square_avatar.dart';
-import 'package:banca_movil/views/layouts/base_scaffold.dart';
-import 'package:banca_movil/views/layouts/scroll_layout.dart';
-import 'package:banca_movil/views/components/account_card.dart';
+import 'package:banca_movil/views/components/primitives/base_card.dart';
+import 'package:banca_movil/views/components/primitives/input_text.dart';
+import 'package:banca_movil/views/components/composites/primary_button.dart';
+import 'package:banca_movil/views/components/primitives/square_avatar.dart';
+import 'package:banca_movil/views/components/layouts/base_scaffold.dart';
+import 'package:banca_movil/views/components/layouts/scroll_layout.dart';
+import 'package:banca_movil/views/components/composites/account_card.dart';
 import 'package:banca_movil/views/deposit/deposit_review.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,10 +24,10 @@ class DepositPaymentInfo extends StatefulWidget {
 }
 
 class _DepositPaymentInfoState extends State<DepositPaymentInfo> {
-  late TextEditingController amountController;
-  late TextEditingController descriptionController;
+  late TextEditingController _amountController;
+  late TextEditingController _descriptionController;
   bool get _areDetailsFieldsEmpty {
-    return amountController.text.isEmpty || descriptionController.text.isEmpty;
+    return _amountController.text.isEmpty || _descriptionController.text.isEmpty;
   }
 
   static const _sectionPadding = EdgeInsets.fromLTRB(16, 8, 16, 4);
@@ -36,17 +36,17 @@ class _DepositPaymentInfoState extends State<DepositPaymentInfo> {
   @override
   void initState() {
     super.initState();
-    amountController = TextEditingController();
-    descriptionController = TextEditingController();
+    _amountController = TextEditingController();
+    _descriptionController = TextEditingController();
 
-    amountController.addListener(_refresh);
-    descriptionController.addListener(_refresh);
+    _amountController.addListener(_refresh);
+    _descriptionController.addListener(_refresh);
   }
 
   @override
   void dispose() {
-    amountController.dispose();
-    descriptionController.dispose();
+    _amountController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
@@ -110,7 +110,7 @@ class _DepositPaymentInfoState extends State<DepositPaymentInfo> {
             InputText(
               labelText: 'Monto',
               prefixText: '₡',
-              textEditingController: amountController,
+              textEditingController: _amountController,
               textInputAction: TextInputAction.next,
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
@@ -125,7 +125,7 @@ class _DepositPaymentInfoState extends State<DepositPaymentInfo> {
             SizedBox(height: 8),
             InputText(
               labelText: 'Concepto',
-              textEditingController: descriptionController,
+              textEditingController: _descriptionController,
               textInputAction: TextInputAction.done,
             ),
           ],
@@ -147,8 +147,8 @@ class _DepositPaymentInfoState extends State<DepositPaymentInfo> {
               extra: DepositReviewParams(
                 destinationAccount: widget.params.destinationAccount,
                 sourceAccount: widget.params.sourceAccount,
-                amount: amountController.text,
-                description: descriptionController.text,
+                amount: _amountController.text,
+                description: _descriptionController.text,
               ),
             );
           },

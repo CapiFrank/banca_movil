@@ -1,6 +1,7 @@
 import 'package:banca_movil/views/deposit/deposit_select_source_account.dart';
 import 'package:banca_movil/views/deposit/deposit_payment_info.dart';
 import 'package:banca_movil/views/deposit/deposit_review.dart';
+import 'package:banca_movil/views/service/service_selection.dart';
 import 'package:banca_movil/views/transfer/transfer_payment_info.dart';
 import 'package:banca_movil/views/transfer/transfer_review.dart';
 import 'package:banca_movil/views/transfer/transfer_select_sinpe_account.dart';
@@ -17,8 +18,8 @@ import 'package:banca_movil/views/partials/account_partials.dart/account_details
 import 'package:banca_movil/views/account_view.dart';
 import 'package:banca_movil/views/deposit/deposit_select_destination_account.dart';
 import 'package:banca_movil/views/exchange_view.dart';
-import 'package:banca_movil/views/layouts/base_scaffold.dart';
-import 'package:banca_movil/views/layouts/bottom_navbar.dart';
+import 'package:banca_movil/views/components/layouts/base_scaffold.dart';
+import 'package:banca_movil/views/components/layouts/bottom_navbar.dart';
 import 'package:banca_movil/views/login_view.dart';
 
 /// --- AppRoute Metadata ---
@@ -120,6 +121,12 @@ final appRoutes = [
     navIndex: 2,
   ),
   AppRoute(
+    path: '/service',
+    builder: (_, __) => const ServiceSelection(),
+    showBottomNav: true,
+    navIndex: 3,
+  ),
+  AppRoute(
     path: '/deposit/selectsourceaccount',
     builder: (_, state) {
       final account = state.extra as Account;
@@ -142,7 +149,7 @@ final appRoutes = [
   ),
 ];
 final router = GoRouter(
-  initialLocation: '/account',
+  initialLocation: '/',
   routes: [
     ShellRoute(
       builder: (context, state, child) {
@@ -179,6 +186,9 @@ final router = GoRouter(
                           break;
                         case 2:
                           context.go('/deposit');
+                          break;
+                        case 3:
+                          context.go('/service');
                           break;
                       }
                     },

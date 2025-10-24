@@ -1,14 +1,14 @@
 import 'package:banca_movil/models/exchange_rate.dart';
 import 'package:banca_movil/utils/palette.dart';
-import 'package:banca_movil/views/components/elevated_flex_container.dart';
+import 'package:banca_movil/views/components/primitives/elevated_flex_container.dart';
 import 'package:banca_movil/views/partials/exchange_partials/converter_header.dart';
 import 'package:banca_movil/views/partials/exchange_partials/currency_converter.dart';
 import 'package:banca_movil/views/partials/exchange_partials/currency_converter_widget.dart';
 import 'package:banca_movil/views/partials/exchange_partials/currency_selector.dart';
 import 'package:banca_movil/views/partials/exchange_partials/currency_type.dart';
 import 'package:banca_movil/views/partials/exchange_partials/exchange_rates_display.dart';
-import 'package:banca_movil/views/layouts/base_scaffold.dart';
-import 'package:banca_movil/views/layouts/scroll_layout.dart';
+import 'package:banca_movil/views/components/layouts/base_scaffold.dart';
+import 'package:banca_movil/views/components/layouts/scroll_layout.dart';
 import 'package:flutter/material.dart';
 
 class ExchangeView extends StatefulWidget {

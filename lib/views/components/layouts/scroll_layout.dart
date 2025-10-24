@@ -1,5 +1,5 @@
 import 'package:banca_movil/utils/palette.dart';
-import 'package:banca_movil/views/components/icon_text.dart';
+import 'package:banca_movil/views/components/primitives/icon_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';

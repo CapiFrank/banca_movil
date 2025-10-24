@@ -1,4 +1,4 @@
-import 'package:banca_movil/views/components/section.dart';
+import 'package:banca_movil/views/components/primitives/section.dart';
 import 'package:flutter/material.dart';
 
 class SectionLayout extends StatelessWidget {

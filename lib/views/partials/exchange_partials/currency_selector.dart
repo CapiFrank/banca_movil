@@ -1,6 +1,6 @@
 import 'package:banca_movil/utils/palette.dart';
-import 'package:banca_movil/views/components/elevated_flex_container.dart';
-import 'package:banca_movil/views/components/selectable_tab_item.dart';
+import 'package:banca_movil/views/components/primitives/elevated_flex_container.dart';
+import 'package:banca_movil/views/components/primitives/selectable_tab_item.dart';
 import 'package:banca_movil/views/partials/exchange_partials/currency_type.dart';
 import 'package:flutter/material.dart';
 

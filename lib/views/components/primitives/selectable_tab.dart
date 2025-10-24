@@ -1,5 +1,5 @@
 import 'package:banca_movil/utils/palette.dart';
-import 'package:banca_movil/views/components/selectable_tab_item.dart';
+import 'package:banca_movil/views/components/primitives/selectable_tab_item.dart';
 import 'package:flutter/material.dart';
 
 class SelectableTab extends StatelessWidget {

@@ -30,4 +30,7 @@ class FavoriteAccount extends Model<FavoriteAccount> {
 
   @override
   String get table => "favorite_accounts";
+
+  @override
+  List<String>? get embedRelations => [];
 }

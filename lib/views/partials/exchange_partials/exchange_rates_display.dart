@@ -1,6 +1,6 @@
 import 'package:banca_movil/models/exchange_rate.dart';
-import 'package:banca_movil/views/components/selectable_tab.dart';
-import 'package:banca_movil/views/components/selectable_tab_item.dart';
+import 'package:banca_movil/views/components/primitives/selectable_tab.dart';
+import 'package:banca_movil/views/components/primitives/selectable_tab_item.dart';
 import 'package:flutter/material.dart';
 
 class ExchangeRatesDisplay extends StatelessWidget {

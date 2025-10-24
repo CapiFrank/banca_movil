@@ -1,5 +1,6 @@
-import 'package:banca_movil/views/components/base_card.dart';
-import 'package:banca_movil/views/components/square_avatar.dart';
+import 'package:banca_movil/utils/utilities.dart';
+import 'package:banca_movil/views/components/primitives/base_card.dart';
+import 'package:banca_movil/views/components/primitives/square_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:banca_movil/models/account.dart';
 import 'package:banca_movil/utils/palette.dart';
@@ -30,7 +31,9 @@ class AccountCard extends StatelessWidget {
         child: Icon(Clarity.bank_solid, color: Palette(context).primary),
       ),
       title: Text(
-        account.type,
+        account.type == AccountType.savings
+            ? 'Cuenta de ahorros'
+            : 'Cuenta corriente',
         style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
       ),
       subtitle: Column(
@@ -38,13 +41,13 @@ class AccountCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            account.number,
+            account.accountNumber,
             style: textTheme.bodyMedium?.copyWith(
               color: Palette(context).onSurface.withValues(alpha: 0.7),
             ),
           ),
           Text(
-            account.owner,
+            account.user!.name,
             style: textTheme.bodySmall?.copyWith(
               color: Palette(context).onSurface.withValues(alpha: 0.7),
             ),
@@ -58,7 +61,7 @@ class AccountCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text(
-                account.balance,
+                '₡${formatNumberWithFixedDecimals(formatNumberString(account.balance.toString()))}',
                 style: textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Palette(context).secondary,
