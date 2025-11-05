@@ -1,6 +1,7 @@
 import 'package:banca_movil/models/transfer.dart';
 import 'package:banca_movil/types/transaction_state_type.dart';
 import 'package:banca_movil/types/transaction_type.dart';
+import 'package:banca_movil/views/components/layouts/empty_state_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:banca_movil/models/account.dart';
@@ -71,18 +72,22 @@ class _AccountDetailsState extends State<AccountDetails> {
           hasScrollBody: true,
           child: Material(
             elevation: 2,
-            child: ListView.builder(
-              padding: EdgeInsets.zero,
-              itemCount: groups.length,
-              itemBuilder: (context, index) {
-                final group = groups[index];
-                return TransactionGroupWidget(
-                  group: group,
-                  isRecentGroup: group.title == "Recientes",
-                  filter: _filter,
-                  onFilterChanged: (f) => setState(() => _filter = f),
-                );
-              },
+            child: EmptyStateHandler(
+              isEmpty: groups.isEmpty || (groups[0].items.isEmpty && groups[1].items.isEmpty),
+              emptyMessage: 'No hay transacciones',
+              child: ListView.builder(
+                padding: EdgeInsets.zero,
+                itemCount: groups.length,
+                itemBuilder: (context, index) {
+                  final group = groups[index];
+                  return TransactionGroupWidget(
+                    group: group,
+                    isRecentGroup: group.title == "Recientes",
+                    filter: _filter,
+                    onFilterChanged: (f) => setState(() => _filter = f),
+                  );
+                },
+              ),
             ),
           ),
         ),

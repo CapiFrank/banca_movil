@@ -9,6 +9,7 @@ import 'package:banca_movil/utils/styles.dart';
 import 'package:banca_movil/utils/palette.dart';
 import 'package:banca_movil/utils/use_state.dart';
 import 'package:banca_movil/views/components/composites/section_card.dart';
+import 'package:banca_movil/views/components/layouts/empty_state_handler.dart';
 import 'package:banca_movil/views/components/primitives/input_text.dart';
 import 'package:banca_movil/views/components/composites/primary_button.dart';
 import 'package:banca_movil/views/components/composites/primary_checkbox.dart';
@@ -108,7 +109,7 @@ class _TransferSelectDestinationAccountState
               final account = FavoriteAccount(
                 alias: state.account.user!.name,
                 accountNumber: _accountNumberController.text,
-                userId: user.id!
+                userId: user.id!,
               );
               _navigateToPaymentInfo(account);
             }
@@ -264,21 +265,25 @@ class _TransferSelectDestinationAccountState
   Widget _buildFavoriteAccountsList(List<FavoriteAccount> favoriteAccounts) {
     return SliverFillRemaining(
       hasScrollBody: true,
-      child: ListView.builder(
-        padding: EdgeInsets.zero,
-        itemCount: favoriteAccounts.length,
-        itemBuilder: (context, index) {
-          final account = favoriteAccounts[index];
-          return SectionCard(
-            wrapperType: WrapperType.normal,
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            title: account.alias,
-            subtitle: account.accountNumber,
-            icon: Clarity.bank_solid,
-            trailing: _buildRemoveFavoriteButton(account),
-            onTap: () => _navigateToPaymentInfo(account),
-          );
-        },
+      child: EmptyStateHandler(
+        isEmpty: favoriteAccounts.isEmpty,
+        emptyMessage: 'No hay cuentas favoritas',
+        child: ListView.builder(
+          padding: EdgeInsets.zero,
+          itemCount: favoriteAccounts.length,
+          itemBuilder: (context, index) {
+            final account = favoriteAccounts[index];
+            return SectionCard(
+              wrapperType: WrapperType.normal,
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              title: account.alias,
+              subtitle: account.accountNumber,
+              icon: Clarity.bank_solid,
+              trailing: _buildRemoveFavoriteButton(account),
+              onTap: () => _navigateToPaymentInfo(account),
+            );
+          },
+        ),
       ),
     );
   }

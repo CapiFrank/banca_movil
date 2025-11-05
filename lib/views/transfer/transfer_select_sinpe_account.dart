@@ -8,6 +8,7 @@ import 'package:banca_movil/types/payment_method_type.dart';
 import 'package:banca_movil/utils/styles.dart';
 import 'package:banca_movil/utils/palette.dart';
 import 'package:banca_movil/utils/use_state.dart';
+import 'package:banca_movil/views/components/layouts/empty_state_handler.dart';
 import 'package:banca_movil/views/components/primitives/base_card.dart';
 import 'package:banca_movil/views/components/primitives/input_text.dart';
 import 'package:banca_movil/views/components/composites/primary_button.dart';
@@ -108,7 +109,7 @@ class _TransferSelectSinpeAccountState extends State<TransferSelectSinpeAccount>
               final account = FavoriteAccount(
                 alias: state.interbankAccount.name,
                 accountNumber: state.interbankAccount.ibanNumber,
-                userId: user.id!
+                userId: user.id!,
               );
               _navigateToPaymentInfo(account);
             }
@@ -202,31 +203,38 @@ class _TransferSelectSinpeAccountState extends State<TransferSelectSinpeAccount>
   Widget _buildFavoriteAccountsList(List<FavoriteAccount> favoriteAccounts) {
     return SliverFillRemaining(
       hasScrollBody: true,
-      child: ListView.builder(
-        padding: EdgeInsets.zero,
-        itemCount: favoriteAccounts.length,
-        itemBuilder: (context, index) {
-          final account = favoriteAccounts[index];
-          return BaseCard(
-            onTap: () {
-              _navigateToPaymentInfo(account);
-            },
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            leading: SquareAvatar(
-              child: Icon(
-                Clarity.bank_solid,
-                color: Palette(context).primary,
-                size: 24,
+      child: EmptyStateHandler(
+        isEmpty: favoriteAccounts.isEmpty,
+        emptyMessage: 'No hay cuentas favoritas',
+        child: ListView.builder(
+          padding: EdgeInsets.zero,
+          itemCount: favoriteAccounts.length,
+          itemBuilder: (context, index) {
+            final account = favoriteAccounts[index];
+            return BaseCard(
+              onTap: () {
+                _navigateToPaymentInfo(account);
+              },
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              leading: SquareAvatar(
+                child: Icon(
+                  Clarity.bank_solid,
+                  color: Palette(context).primary,
+                  size: 24,
+                ),
               ),
-            ),
-            title: Text(
-              account.alias,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-            subtitle: Text(account.accountNumber),
-            trailing: _buildRemoveFavoriteButton(account),
-          );
-        },
+              title: Text(
+                account.alias,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              subtitle: Text(account.accountNumber),
+              trailing: _buildRemoveFavoriteButton(account),
+            );
+          },
+        ),
       ),
     );
   }

@@ -99,9 +99,9 @@ class LoginViewState extends State<LoginView> {
               return Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('assets/img/pattern_8.png'),
+                    image: AssetImage('assets/img/pattern_11.png'),
                     repeat: ImageRepeat.repeat,
-                    scale: 20,
+                    scale: 15,
                   ),
                 ),
                 child: SafeArea(
