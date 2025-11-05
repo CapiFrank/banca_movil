@@ -1,3 +1,4 @@
+import 'package:banca_movil/utils/model.dart';
 import 'package:flutter/material.dart';
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
@@ -105,6 +106,49 @@ String _addThousandsSeparator(String integerPart) {
   return buffer.toString().split('').reversed.join();
 }
 
-Widget loadingProgress() {
-  return const Center(child: CircularProgressIndicator());
+// Widget loadingProgress() {
+//   return const Center(child: CircularProgressIndicator());
+// }
+
+
+List<T> parseJsonList<T extends Model<T>>(T model, dynamic object) {
+  final list = object as List<dynamic>?;
+  if (list == null) return <T>[];
+
+  final result = <T>[];
+  for (final item in list) {
+    try {
+      if (item is Map<String, dynamic>) {
+        result.add(model.fromJson(item));
+      } else {
+        throw FormatException(
+          'Elemento esperado Map<String,dynamic>, se obtuvo ${item.runtimeType}',
+        );
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+  return result;
+}
+
+T? safeParse<T extends Model<T>>(dynamic data, T model) {
+  if (data is Map<String, dynamic>) {
+    return model.fromJson(data);
+  }
+  return null;
+}
+
+T enumFromString<T extends Enum>(String value, Iterable<T> values) {
+  return values.singleWhere((e) => e.name == value, orElse: () => values.first);
+}
+
+String formatDateTime(DateTime date) {
+  final day = date.day.toString().padLeft(2, '0');
+  final month = date.month.toString().padLeft(2, '0');
+  final year = date.year.toString();
+  final hour = date.hour.toString().padLeft(2, '0');
+  final minute = date.minute.toString().padLeft(2, '0');
+
+  return "$day/$month/$year $hour:$minute";
 }

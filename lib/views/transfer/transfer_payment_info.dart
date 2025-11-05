@@ -55,6 +55,7 @@ class _TransferPaymentInfoState extends State<TransferPaymentInfo> {
 
   @override
   Widget build(BuildContext context) {
+    final destinationAccount = widget.params.destinationAccount;
     return BaseScaffold(
       body: ScrollLayout.child(
         title: 'Enviar dinero',
@@ -68,7 +69,7 @@ class _TransferPaymentInfoState extends State<TransferPaymentInfo> {
             ),
           ),
           _buildSectionTitle('Cuenta de destino'),
-          
+
           SliverToBoxAdapter(
             child: BaseCard(
               margin: _horizontalPadding,
@@ -80,10 +81,14 @@ class _TransferPaymentInfoState extends State<TransferPaymentInfo> {
                 ),
               ),
               title: Text(
-                widget.params.destinationAccount.fullName,
+                destinationAccount.alias,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
-              subtitle: Text(widget.params.destinationAccount.accountNumber),
+              subtitle: Text(
+                destinationAccount.phone.isEmpty
+                    ? destinationAccount.accountNumber
+                    : destinationAccount.phone,
+              ),
             ),
           ),
           _buildSectionTitle('Detalles de la transacción'),

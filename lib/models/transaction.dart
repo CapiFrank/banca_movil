@@ -1,23 +1,22 @@
+import 'package:banca_movil/types/transaction_state_type.dart';
+import 'package:banca_movil/types/transaction_type.dart';
 import 'package:banca_movil/utils/model.dart';
-
-enum TransactionStatus { applied, blocked }
-
-enum TransactionType { income, expense }
+import 'package:banca_movil/utils/utilities.dart';
 
 class Transaction extends Model<Transaction> {
-  final String description;
-  final TransactionStatus status;
-  final TransactionType type;
-  final double amount;
-  final String currency;
+  String description;
+  TransactionStateType status;
+  TransactionType type;
+  double amount;
+  String currency;
 
   Transaction({
     super.id,
     super.createdAt,
     super.updatedAt,
     this.description = '',
-    this.status = TransactionStatus.blocked,
-    this.amount = 0.0,
+    this.status = TransactionStateType.blocked,
+    this.amount = 0,
     this.currency = '',
     this.type = TransactionType.income,
   });
@@ -31,8 +30,8 @@ class Transaction extends Model<Transaction> {
       'type': type.name, // almacena "income" o "expense"
       'amount': amount,
       'currency': currency,
-      'created_at': createdAt,
-      'updated_at': updatedAt,
+      'created_at': createdAt.toString(),
+      'updated_at': updatedAt.toString(),
     };
   }
 
@@ -41,14 +40,8 @@ class Transaction extends Model<Transaction> {
     return Transaction(
       id: json['id'],
       description: json['description'],
-      status: TransactionStatus.values.firstWhere(
-        (e) => e.name == json['status'],
-        orElse: () => TransactionStatus.applied,
-      ),
-      type: TransactionType.values.firstWhere(
-        (e) => e.name == json['type'],
-        orElse: () => TransactionType.expense,
-      ),
+      status: enumFromString(json['status'], TransactionStateType.values),
+      type: enumFromString(json['type'], TransactionType.values),
       amount: (double.tryParse(json['amount'].toString()) ?? 0.0),
       currency: json['currency'],
       createdAt: DateTime.parse(json['created_at']),

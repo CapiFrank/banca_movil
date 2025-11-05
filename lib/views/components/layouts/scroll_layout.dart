@@ -1,6 +1,8 @@
+import 'package:banca_movil/bloc/auth/auth_bloc.dart';
 import 'package:banca_movil/utils/palette.dart';
 import 'package:banca_movil/views/components/primitives/icon_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -190,7 +192,10 @@ class _ExitButton extends StatelessWidget {
           fontWeight: FontWeight.w500,
         ),
       ),
-      onPressed: () => context.push(path),
+      onPressed: () async {
+        context.read<AuthBloc>().add(AuthLogoutRequested());
+        context.go('/');
+      },
     );
   }
 }

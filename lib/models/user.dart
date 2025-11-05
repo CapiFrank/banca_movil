@@ -1,11 +1,13 @@
+import 'package:banca_movil/models/authorized_account.dart';
 import 'package:banca_movil/utils/model.dart';
+import 'package:banca_movil/utils/utilities.dart';
 
 class User extends Model<User> {
   @override
   String get table => "users";
 
   @override
-  List<String>? get embedRelations => [];
+  List<String>? get embedRelations => ['authorized_accounts', 'accounts', 'favorite_accounts'];
 
   String name;
   String email;
@@ -13,6 +15,7 @@ class User extends Model<User> {
   String phone;
   String password;
   String status;
+  List<AuthorizedAccount> authorizedAccounts;
 
   User({
     super.id,
@@ -22,6 +25,7 @@ class User extends Model<User> {
     this.password = "",
     this.phone = "",
     this.status = "",
+    this.authorizedAccounts = const [],
   });
 
   @override
@@ -44,5 +48,9 @@ class User extends Model<User> {
     password: json["password"],
     phone: json["phone"],
     status: json["status"],
+    authorizedAccounts: parseJsonList(
+      AuthorizedAccount(),
+      json['authorized_accounts'],
+    ),
   );
 }

@@ -1,33 +1,6 @@
 import 'dart:io';
+import 'utils.dart';
 
-String getProjectName() {
-  final file = File('pubspec.yaml'); 
-  if (!file.existsSync()) {
-    throw Exception("⚠️ No se encontró pubspec.yaml en el directorio actual.");
-  }
-  final lines = file.readAsLinesSync();
-  for (final line in lines) {
-    if (line.startsWith('name:')) {
-      return line.split(':').last.trim();
-    }
-  }
-  throw Exception("⚠️ No se pudo obtener el nombre del proyecto en pubspec.yaml");
-}
-
-String camelCaseToSnakeCase(String input) {
-  return input.replaceAllMapped(RegExp(r'([a-z])([A-Z])'), (match) {
-    return '${match.group(1)}_${match.group(2)?.toLowerCase()}';
-  }).toLowerCase();
-}
-
-String pluralize(String word) {
-  if (word.endsWith('y')) {
-    return '${word.substring(0, word.length - 1)}ies';
-  } else if (RegExp(r'(s|x|z|ch|sh)$').hasMatch(word)) {
-    return '${word}es';
-  }
-  return '${word}s';
-}
 
 void main(List<String> arguments) {
   if (arguments.isEmpty) {
@@ -48,8 +21,8 @@ void main(List<String> arguments) {
       '''
 import 'package:$projectName/utils/model.dart';
 
-class $modelName extends Model {
-String text;
+class $modelName extends Model<$modelName> {
+  String text;
 
   $modelName(
       {super.id,
@@ -71,14 +44,11 @@ String text;
         text: json['text']);
   }
 
-  static $modelName fromDoc(id, data) {
-    return $modelName(
-        id: id,
-        text: data['text']);
-  }
-
   @override
   String get table => "$collectionName";
+  
+  @override
+  List<String>? get embedRelations => [];
 }
 ''';
 

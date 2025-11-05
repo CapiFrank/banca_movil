@@ -1,3 +1,9 @@
+import 'package:banca_movil/bloc/payment/payment_bloc.dart';
+import 'package:banca_movil/types/payment_method_type.dart';
+import 'package:banca_movil/utils/utilities.dart';
+import 'package:banca_movil/views/components/primitives/sweet_alert.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:banca_movil/models/account.dart';
 import 'package:banca_movil/models/favorite_account.dart';
 import 'package:banca_movil/utils/styles.dart';
@@ -5,7 +11,6 @@ import 'package:banca_movil/utils/palette.dart';
 import 'package:banca_movil/views/components/primitives/base_card.dart';
 import 'package:banca_movil/views/components/composites/primary_button.dart';
 import 'package:banca_movil/views/components/primitives/square_avatar.dart';
-import 'package:banca_movil/views/components/primitives/sweet_alert.dart';
 import 'package:banca_movil/views/components/layouts/base_scaffold.dart';
 import 'package:banca_movil/views/components/layouts/scroll_layout.dart';
 import 'package:banca_movil/views/components/composites/account_card.dart';
@@ -25,35 +30,77 @@ class _DepositReviewState extends State<DepositReview> {
   static const _sectionPadding = EdgeInsets.fromLTRB(16, 8, 16, 4);
   static const _horizontalPadding = EdgeInsets.symmetric(horizontal: 16.0);
 
+  void _onConfirm(BuildContext context) async {
+    final amount = parseLocalizedNumber(widget.params.amount);
+    final description = widget.params.description;
+    final destinationAccount = widget.params.destinationAccount;
+    final favoriteAccount = widget.params.sourceAccount;
+
+    context.read<PaymentBloc>().add(
+      ConfirmPaymentRequested(
+        amount: amount,
+        favoriteAccount: favoriteAccount,
+        account: destinationAccount,
+        description: description,
+        paymentMethod: PaymentMethod.deposit
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BaseScaffold(
-      body: ScrollLayout.child(
-        title: 'Confirmación',
-        children: [
-          _buildSectionTitle('Cuenta de destino'),
-          SliverToBoxAdapter(
-            child: AccountCard(
-              margin: _horizontalPadding,
-              account: widget.params.destinationAccount,
-              showTrailingIcon: false,
-            ),
+    return BlocConsumer<PaymentBloc, PaymentState>(
+      listener: (context, state) {
+        if (state is PaymentSuccess) {
+          SweetAlert.show(
+            context: context,
+            type: SweetAlertType.success,
+            title: "Éxito",
+            message: "Operación realizada correctamente",
+            autoClose: const Duration(seconds: 2),
+          );
+          if (context.mounted) {
+            context.go('/account');
+          }
+        } else if (state is PaymentError) {
+          SweetAlert.show(
+            context: context,
+            type: SweetAlertType.error,
+            message: state.message,
+            autoClose: const Duration(seconds: 2),
+          );
+        }
+      },
+      builder: (context, state) {
+        return BaseScaffold(
+          body: ScrollLayout.child(
+            title: 'Confirmación',
+            children: [
+              _buildSectionTitle('Cuenta de destino'),
+              SliverToBoxAdapter(
+                child: AccountCard(
+                  margin: _horizontalPadding,
+                  account: widget.params.destinationAccount,
+                  showTrailingIcon: false,
+                ),
+              ),
+              _buildSectionTitle('Cuenta de origen'),
+              _buildSectionCard(
+                Clarity.bank_solid_alerted,
+                widget.params.sourceAccount.alias,
+                widget.params.sourceAccount.accountNumber,
+              ),
+              _buildSectionTitle('Detalles de la transacción'),
+              _buildSectionCard(
+                Iconsax.moneys_outline,
+                '₡${widget.params.amount}',
+                widget.params.description,
+              ),
+            ],
           ),
-          _buildSectionTitle('Cuenta de origen'),
-          _buildSectionCard(
-            Clarity.bank_solid_alerted,
-            widget.params.sourceAccount.fullName,
-            widget.params.sourceAccount.accountNumber,
-          ),
-          _buildSectionTitle('Detalles de la transacción'),
-          _buildSectionCard(
-            Iconsax.moneys_outline,
-            '₡${widget.params.amount}',
-            widget.params.description,
-          ),
-        ],
-      ),
-      bottomNavigationBar: _buildBottomAction(),
+          bottomNavigationBar: _buildBottomAction(context),
+        );
+      },
     );
   }
 
@@ -86,25 +133,13 @@ class _DepositReviewState extends State<DepositReview> {
     );
   }
 
-  Widget _buildBottomAction() {
+  Widget _buildBottomAction(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: IntrinsicHeight(
         child: PrimaryButton(
           labelText: 'Confirmar',
-          onPressed: () async {
-            await SweetAlert.show(
-              context: context,
-              type: SweetAlertType.success,
-              title: "Éxito",
-              message: "Operación realizada correctamente",
-              autoClose: const Duration(seconds: 2),
-            );
-            // Una vez cerrado, navega
-            if (context.mounted) {
-              context.go('/account');
-            }
-          },
+          onPressed: () => _onConfirm(context),
         ),
       ),
     );

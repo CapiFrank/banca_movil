@@ -1,7 +1,9 @@
+import 'package:banca_movil/bloc/payment/payment_bloc.dart';
 import 'package:banca_movil/models/account.dart';
 import 'package:banca_movil/models/favorite_account.dart';
 import 'package:banca_movil/utils/styles.dart';
 import 'package:banca_movil/utils/palette.dart';
+import 'package:banca_movil/utils/utilities.dart';
 import 'package:banca_movil/views/components/primitives/base_card.dart';
 import 'package:banca_movil/views/components/composites/primary_button.dart';
 import 'package:banca_movil/views/components/primitives/square_avatar.dart';
@@ -10,6 +12,7 @@ import 'package:banca_movil/views/components/layouts/base_scaffold.dart';
 import 'package:banca_movil/views/components/layouts/scroll_layout.dart';
 import 'package:banca_movil/views/components/composites/account_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -25,35 +28,77 @@ class _TransferReviewState extends State<TransferReview> {
   static const _sectionPadding = EdgeInsets.fromLTRB(16, 8, 16, 4);
   static const _horizontalPadding = EdgeInsets.symmetric(horizontal: 16.0);
 
+void _onConfirm(BuildContext context) async {
+    final amount = parseLocalizedNumber(widget.params.amount);
+    var description = widget.params.description;
+    final favoriteAccount = widget.params.destinationAccount;
+    final account = widget.params.sourceAccount;
+
+    context.read<PaymentBloc>().add(
+      ConfirmPaymentRequested(
+        amount: amount,
+        account: account,
+        favoriteAccount: favoriteAccount,
+        description: description,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BaseScaffold(
-      body: ScrollLayout.child(
-        title: 'Confirmación',
-        children: [
-          _buildSectionTitle('Cuenta de origen'),
-          SliverToBoxAdapter(
-            child: AccountCard(
-              margin: _horizontalPadding,
-              account: widget.params.sourceAccount,
-              showTrailingIcon: false,
-            ),
+    return BlocConsumer<PaymentBloc, PaymentState>(
+      listener: (context, state) {
+        if (state is PaymentSuccess) {
+          SweetAlert.show(
+            context: context,
+            type: SweetAlertType.success,
+            title: "Éxito",
+            message: "Operación realizada correctamente",
+            autoClose: const Duration(seconds: 2),
+          );
+          if (context.mounted) {
+            context.go('/account');
+          }
+        } else if (state is PaymentError) {
+          SweetAlert.show(
+            context: context,
+            type: SweetAlertType.error,
+            message: state.message,
+            autoClose: const Duration(seconds: 2),
+          );
+        }
+      },
+      builder: (context, state) {
+        final destinationAccount = widget.params.destinationAccount;
+        return BaseScaffold(
+          body: ScrollLayout.child(
+            title: 'Confirmación',
+            children: [
+              _buildSectionTitle('Cuenta de origen'),
+              SliverToBoxAdapter(
+                child: AccountCard(
+                  margin: _horizontalPadding,
+                  account: widget.params.sourceAccount,
+                  showTrailingIcon: false,
+                ),
+              ),
+              _buildSectionTitle('Cuenta de destino'),
+              _buildSectionCard(
+                Clarity.bank_solid_alerted,
+                destinationAccount.alias,
+                destinationAccount.phone.isEmpty ? destinationAccount.accountNumber : destinationAccount.phone,
+              ),
+              _buildSectionTitle('Detalles de la transacción'),
+              _buildSectionCard(
+                Iconsax.moneys_outline,
+                '₡${widget.params.amount}',
+                widget.params.description,
+              ),
+            ],
           ),
-          _buildSectionTitle('Cuenta de destino'),
-          _buildSectionCard(
-            Clarity.bank_solid_alerted,
-            widget.params.destinationAccount.fullName,
-            widget.params.destinationAccount.accountNumber,
-          ),
-          _buildSectionTitle('Detalles de la transacción'),
-          _buildSectionCard(
-            Iconsax.moneys_outline,
-            '₡${widget.params.amount}',
-            widget.params.description,
-          ),
-        ],
-      ),
-      bottomNavigationBar: _buildBottomAction(),
+          bottomNavigationBar: _buildBottomAction(context),
+        );
+      },
     );
   }
 
@@ -86,25 +131,13 @@ class _TransferReviewState extends State<TransferReview> {
     );
   }
 
-  Widget _buildBottomAction() {
+  Widget _buildBottomAction(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: IntrinsicHeight(
         child: PrimaryButton(
           labelText: 'Confirmar',
-          onPressed: () async {
-            await SweetAlert.show(
-              context: context,
-              type: SweetAlertType.success,
-              title: "Éxito",
-              message: "Operación realizada correctamente",
-              autoClose: const Duration(seconds: 2),
-            );
-            // Una vez cerrado, navega
-            if (context.mounted) {
-              context.go('/account');
-            }
-          },
+          onPressed: () => _onConfirm(context),
         ),
       ),
     );

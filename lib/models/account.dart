@@ -1,19 +1,21 @@
 import 'package:banca_movil/models/user.dart';
+import 'package:banca_movil/types/account_type.dart';
 import 'package:banca_movil/utils/model.dart';
+import 'package:banca_movil/utils/utilities.dart';
 
-enum AccountType { checking, savings }
+
 
 class Account extends Model<Account> {
   @override
   String get table => "accounts";
 
-  final AccountType type;
-  final String accountNumber;
-  final String ibanNumber;
-  final String userId;
-  final double balance;
-  final String currency;
-  final User? user;
+  AccountType type;
+  String accountNumber;
+  String ibanNumber;
+  String userId;
+  double balance;
+  String currency;
+  User? user;
 
   Account({
     super.id,
@@ -21,7 +23,7 @@ class Account extends Model<Account> {
     this.accountNumber = '',
     this.ibanNumber = '',
     this.userId = '',
-    this.balance = 0.0,
+    this.balance = 0,
     this.currency = '',
     this.user,
   });
@@ -40,16 +42,13 @@ class Account extends Model<Account> {
   @override
   Account fromJson(Map<String, dynamic> json) => Account(
     id: json["id"],
-    type: AccountType.values.firstWhere(
-      (e) => e.name == json['type'],
-      orElse: () => AccountType.savings,
-    ),
+    type: enumFromString(json['type'], AccountType.values),
     accountNumber: json["account_number"],
     ibanNumber: json["iban_number"],
     userId: json["userId"],
     balance: (double.tryParse(json['balance'].toString()) ?? 0.0),
     currency: json["currency"],
-    user: User().fromJson(json["user"]),
+    user: safeParse(json['user'], User()),
   );
 
   @override

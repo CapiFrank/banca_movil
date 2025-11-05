@@ -101,15 +101,33 @@ class JsonRepository<T extends Model<T>> implements Repository<T> {
 
   /// Crea un nuevo registro
   @override
-  void create(T item) async {
+  Future<T> create(T item) async {
+    // Convertimos el objeto a mapa
+    final jsonMap = item.toJson();
+
+    // Si el id es null o vacío, lo removemos del body
+    if ((item.id ?? '').isEmpty) {
+      jsonMap.remove('id');
+    }
+
+    // Enviamos petición
     final response = await http.post(
       Uri.parse(baseUrl),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(item.toJson()),
+      body: jsonEncode(jsonMap),
     );
+
+    // Validamos código HTTP
     if (response.statusCode != 201) {
-      throw Exception('Error al crear el registro');
+      throw Exception('Error al crear el registro (${response.statusCode})');
     }
+
+    // Si la respuesta viene con un objeto JSON, lo decodificamos
+    final decoded = jsonDecode(response.body);
+    if (decoded == null) throw Exception('Error al crear el registro');
+
+    // Devolvemos el modelo actualizado
+    return item.fromJson(decoded);
   }
 
   /// Actualiza un registro existente

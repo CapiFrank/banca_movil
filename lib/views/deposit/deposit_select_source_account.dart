@@ -1,11 +1,16 @@
+import 'package:banca_movil/bloc/auth/auth_bloc.dart';
+import 'package:banca_movil/bloc/favorite_account/favorite_account_bloc.dart';
+import 'package:banca_movil/bloc/payment/payment_bloc.dart';
 import 'package:banca_movil/models/account.dart';
 import 'package:banca_movil/models/favorite_account.dart';
+import 'package:banca_movil/types/payment_method_type.dart';
 import 'package:banca_movil/utils/styles.dart';
 import 'package:banca_movil/utils/palette.dart';
 import 'package:banca_movil/utils/use_state.dart';
 import 'package:banca_movil/views/components/primitives/base_card.dart';
 import 'package:banca_movil/views/components/primitives/input_text.dart';
 import 'package:banca_movil/views/components/composites/primary_button.dart';
+import 'package:banca_movil/views/components/primitives/loading_progress.dart';
 import 'package:banca_movil/views/components/primitives/square_avatar.dart';
 import 'package:banca_movil/views/components/primitives/sweet_alert.dart';
 import 'package:banca_movil/views/components/layouts/base_scaffold.dart';
@@ -14,6 +19,7 @@ import 'package:banca_movil/views/components/composites/account_card.dart';
 import 'package:banca_movil/views/deposit/deposit_payment_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -46,6 +52,12 @@ class _DepositSelectSourceAccountState extends State<DepositSelectSourceAccount>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final user = context.read<AuthBloc>().user!;
+      context.read<FavoriteAccountBloc>().add(
+        FavoriteAccountsRequested(user: user, type: PaymentMethod.deposit),
+      );
+    });
     _accountNameController = TextEditingController();
     _accountNumberController = TextEditingController(text: 'CR');
     _isAddingFavorite = useState<bool>(false);
@@ -75,29 +87,52 @@ class _DepositSelectSourceAccountState extends State<DepositSelectSourceAccount>
 
   @override
   Widget build(BuildContext context) {
-    return BaseScaffold(
-      body: ScrollLayout.child(
-        title: "Traer dinero",
-        children: [
-          _buildSectionTitle("Cuenta de destino"),
-          SliverToBoxAdapter(
-            child: AccountCard(
-              margin: EdgeInsets.symmetric(horizontal: 16),
-              account: widget.destinationAccount,
-              showTrailingIcon: false,
-            ),
-          ),
-          _buildSectionTitle("Cuenta de origen"),
-          _isAddingFavorite.value
-              ? _buildFavoriteForm()
-              : _buildFavoriteAccountsList(),
-        ],
+    return BlocConsumer<FavoriteAccountBloc, FavoriteAccountState>(
+      listener: (context, state) {
+        if (state is FavoriteAccountError) {
+          SweetAlert.show(
+            type: SweetAlertType.error,
+            message: state.message,
+            context: context,
+            autoClose: Duration(seconds: 2),
+          );
+        }
+      },
+      builder: (context, state) => LoadingProgress(
+        isLoaded: state is! FavoriteAccountLoaded,
+        builder: () {
+          if (state is FavoriteAccountLoaded) {
+            final favoriteAccounts = state.favoriteAccounts;
+
+            return BaseScaffold(
+              body: ScrollLayout.child(
+                title: "Traer dinero",
+                children: [
+                  _buildSectionTitle("Cuenta de destino"),
+                  SliverToBoxAdapter(
+                    child: AccountCard(
+                      margin: EdgeInsets.symmetric(horizontal: 16),
+                      account: widget.destinationAccount,
+                      showTrailingIcon: false,
+                    ),
+                  ),
+                  _buildSectionTitle("Cuenta de origen"),
+                  _isAddingFavorite.value
+                      ? _buildFavoriteForm()
+                      : _buildFavoriteAccountsList(favoriteAccounts),
+                ],
+              ),
+              bottomNavigationBar: _buildBottomAction(),
+            );
+          }
+          return const SizedBox.shrink();
+        },
       ),
-      bottomNavigationBar: _buildBottomAction(),
     );
   }
 
   Widget _buildBottomAction() {
+    final user = context.read<AuthBloc>().user!;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: IntrinsicHeight(
@@ -109,9 +144,12 @@ class _DepositSelectSourceAccountState extends State<DepositSelectSourceAccount>
               _isAddingFavorite.setValue(!_isAddingFavorite.value);
             } else {
               final newAccount = FavoriteAccount(
-                fullName: _accountNameController.text,
+                alias: _accountNameController.text,
                 accountNumber: _accountNumberController.text,
+                type: PaymentMethod.deposit,
+                userId: user.id!,
               );
+              context.read<PaymentBloc>().add(SetSaveFavoriteRequested(true));
               _navigateToPaymentInfo(newAccount);
             }
           },
@@ -129,7 +167,7 @@ class _DepositSelectSourceAccountState extends State<DepositSelectSourceAccount>
     );
   }
 
-  Widget _buildFavoriteAccountsList() {
+  Widget _buildFavoriteAccountsList(List<FavoriteAccount> favoriteAccounts) {
     return SliverFillRemaining(
       hasScrollBody: true,
       child: ListView.builder(
@@ -148,7 +186,7 @@ class _DepositSelectSourceAccountState extends State<DepositSelectSourceAccount>
               ),
             ),
             title: Text(
-              account.fullName,
+              account.alias,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             subtitle: Text(account.accountNumber),
@@ -169,7 +207,7 @@ class _DepositSelectSourceAccountState extends State<DepositSelectSourceAccount>
           color: Palette(context).primary,
           size: 14,
         ),
-        onPressed: () {
+        onPressed: () async {
           SweetAlert.show(
             context: context,
             type: SweetAlertType.confirm,
@@ -178,6 +216,11 @@ class _DepositSelectSourceAccountState extends State<DepositSelectSourceAccount>
                 '¿Está seguro de que desea borrar esta cuenta de favoritos?',
             labelConfirm: 'Sí, borrar de favorito',
             labelCancel: 'No, mantener',
+            onConfirm: () {
+              context.read<FavoriteAccountBloc>().add(
+                FavoriteAccountDeleted(favoriteAccount: account),
+              );
+            },
           );
         },
       ),
@@ -209,57 +252,3 @@ class _DepositSelectSourceAccountState extends State<DepositSelectSourceAccount>
     );
   }
 }
-
-/// Datos de prueba
-final List<FavoriteAccount> favoriteAccounts = [
-  FavoriteAccount(
-    id: '1',
-    fullName: "Daria Balderstone",
-    accountNumber: "CR67413786348514992857",
-  ),
-  FavoriteAccount(
-    id: '2',
-    fullName: "Fern Clendennen",
-    accountNumber: "CR46165721210591915402",
-  ),
-  FavoriteAccount(
-    id: '3',
-    fullName: "Nataniel Brodhead",
-    accountNumber: "CR05394086336969003874",
-  ),
-  FavoriteAccount(
-    id: '4',
-    fullName: "Joannes Skiplorne",
-    accountNumber: "CR60808607697498807745",
-  ),
-  FavoriteAccount(
-    id: '5',
-    fullName: "Malva Gowdie",
-    accountNumber: "CR32874465662511046847",
-  ),
-  FavoriteAccount(
-    id: '6',
-    fullName: "Sibelle Dene",
-    accountNumber: "CR61844857057144371786",
-  ),
-  FavoriteAccount(
-    id: '7',
-    fullName: "Olivero Laidel",
-    accountNumber: "CR21569020118680658501",
-  ),
-  FavoriteAccount(
-    id: '8',
-    fullName: "Papagena Urion",
-    accountNumber: "CR32081956207818461250",
-  ),
-  FavoriteAccount(
-    id: '9',
-    fullName: "Emiline Wilkenson",
-    accountNumber: "CR62693940376249715543",
-  ),
-  FavoriteAccount(
-    id: '10',
-    fullName: "Rhoda Loding",
-    accountNumber: "CR61184495984187589674",
-  ),
-];

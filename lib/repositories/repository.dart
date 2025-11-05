@@ -12,7 +12,7 @@ abstract class Repository<T> {
   Future<List<T>> limit(int count, T model);
   Future<int> count(T model);
 
-  void create(T item);
+  Future<T> create(T item);
   Future<void> update(String id, T newItem);
   Future<void> delete(String id, T model);
 }

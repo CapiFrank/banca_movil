@@ -1,3 +1,4 @@
+import 'package:banca_movil/types/account_type.dart';
 import 'package:banca_movil/utils/utilities.dart';
 import 'package:banca_movil/views/components/primitives/base_card.dart';
 import 'package:banca_movil/views/components/primitives/square_avatar.dart';

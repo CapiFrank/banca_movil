@@ -15,7 +15,7 @@ abstract class Model<T extends Model<T>> {
 
   Repository<T> get repository => RepositoryManager.get<T>(table);
 
-  Future<void> create() async => repository.create(this as T);
+  Future<T> create() async => repository.create(this as T);
   Future<void> update() async =>
       await repository.update(id as dynamic, this as T);
   Future<void> delete() async =>
@@ -34,4 +34,5 @@ abstract class Model<T extends Model<T>> {
   }) => repository.orderBy(key, this as T, descending: descending);
   Future<List<T>> limit(int count) => repository.limit(count, this as T);
   Future<int> count() => repository.count(this as T);
+
 }

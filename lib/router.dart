@@ -1,3 +1,17 @@
+import 'package:banca_movil/bloc/account/account_bloc.dart';
+import 'package:banca_movil/bloc/auth/auth_bloc.dart';
+import 'package:banca_movil/bloc/exchange_rate/exchange_rate_bloc.dart';
+import 'package:banca_movil/bloc/favorite_account/favorite_account_bloc.dart';
+import 'package:banca_movil/bloc/interbank_account/interbank_account_bloc.dart';
+import 'package:banca_movil/bloc/payment/payment_bloc.dart';
+import 'package:banca_movil/bloc/sinpe_movil/sinpe_movil_bloc.dart';
+import 'package:banca_movil/controllers/account_controller.dart';
+import 'package:banca_movil/controllers/auth_controller.dart';
+import 'package:banca_movil/controllers/exchange_rate_controller.dart';
+import 'package:banca_movil/controllers/favorite_account_controller.dart';
+import 'package:banca_movil/controllers/interbank_account_controller.dart';
+import 'package:banca_movil/controllers/payment_controller.dart';
+import 'package:banca_movil/controllers/sinpe_movil_controller.dart';
 import 'package:banca_movil/views/deposit/deposit_select_source_account.dart';
 import 'package:banca_movil/views/deposit/deposit_payment_info.dart';
 import 'package:banca_movil/views/deposit/deposit_review.dart';
@@ -10,6 +24,7 @@ import 'package:banca_movil/views/transfer/transfer_select_source_account.dart';
 import 'package:banca_movil/views/transfer/transfer_select_destination_account.dart';
 import 'package:banca_movil/views/transfer/transfer_select_destination_method.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:banca_movil/models/account.dart';
@@ -67,10 +82,7 @@ final appRoutes = [
   ),
   AppRoute(
     path: '/transfer/selectsourceaccount',
-    builder: (_, state) {
-      final type = state.extra as DestinationMethod;
-      return TransferSelectSourceAccount(type: type);
-    },
+    builder: (_, __) => TransferSelectSourceAccount(),
   ),
   AppRoute(
     path: '/transfer/selectdestinationaccount',
@@ -216,7 +228,22 @@ class ScaffoldWithBottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     return BaseScaffold(
       backgroundColor: Palette(context).background,
-      body: body,
+      body: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => AuthBloc(AuthController())),
+          BlocProvider(create: (_) => AccountBloc(AccountController())),
+          BlocProvider(
+            create: (_) => FavoriteAccountBloc(FavoriteAccountController()),
+          ),
+          BlocProvider(
+            create: (_) => ExchangeRateBloc(ExchangeRateController()),
+          ),
+          BlocProvider(create: (_) => PaymentBloc(PaymentController())),
+          BlocProvider(create: (_) => SinpeMovilBloc(SinpeMovilController())),
+          BlocProvider(create: (_) => InterbankAccountBloc(InterbankAccountController())),
+        ],
+        child: body,
+      ),
       bottomNavigationBar: FadeTransition(
         opacity: ModalRoute.of(context)?.animation ?? kAlwaysCompleteAnimation,
         child: bottomNavigationBar,

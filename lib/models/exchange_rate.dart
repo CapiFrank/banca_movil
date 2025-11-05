@@ -1,34 +1,40 @@
+import 'package:banca_movil/types/currency_type.dart';
 import 'package:banca_movil/utils/model.dart';
+import 'package:banca_movil/utils/utilities.dart';
 
 class ExchangeRate extends Model<ExchangeRate> {
   double buyRate;
   double sellRate;
+  CurrencyType currency;
+  dynamic date;
 
-  ExchangeRate({super.id, required this.buyRate, required this.sellRate});
-
-  static ExchangeRate dollar = ExchangeRate(buyRate: 497.00, sellRate: 511.00);
-
-  static ExchangeRate euro = ExchangeRate(buyRate: 580.02, sellRate: 602.22);
+  ExchangeRate({
+    super.id,
+    this.buyRate = 0,
+    this.sellRate = 0,
+    this.currency = CurrencyType.dollar,
+    this.date = '',
+  });
 
   @override
   Map<String, dynamic> toJson() {
-    return {'id': id, 'buy_rate': buyRate, 'sell_route': sellRate};
+    return {
+      'id': id,
+      'buy_rate': buyRate,
+      'sell_route': sellRate,
+      'currency': currency.name,
+      'date': date,
+    };
   }
 
   @override
   ExchangeRate fromJson(Map<String, dynamic> json) {
     return ExchangeRate(
       id: json['id'],
-      buyRate: json['buy_rate'],
-      sellRate: json['sell_rate '],
-    );
-  }
-
-  static ExchangeRate fromDoc(id, data) {
-    return ExchangeRate(
-      id: id,
-      buyRate: data['buy_rate'],
-      sellRate: data['sell_rate'],
+      buyRate: (double.tryParse(json['buy_rate'].toString()) ?? 0.0),
+      sellRate: (double.tryParse(json['sell_rate'].toString()) ?? 0.0),
+      currency: enumFromString(json['currency'], CurrencyType.values),
+      date: DateTime.parse(json['date']),
     );
   }
 

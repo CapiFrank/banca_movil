@@ -1,27 +1,27 @@
 import 'package:banca_movil/models/transaction.dart';
+import 'package:banca_movil/types/payment_method_type.dart';
 import 'package:banca_movil/utils/model.dart';
-
-enum TransferType { sinpe, sinpeMovil, sameBank }
+import 'package:banca_movil/utils/utilities.dart';
 
 class Transfer extends Model<Transfer> {
-  final String transactionId;
-  final String sourceAccountId;
-  final String destinationAccountId;
-  final TransferType type;
-  final double amount;
-  final String description;
-  final double comision;
-  final Transaction? transaction;
+  String transactionId;
+  String sourceAccountId;
+  String destinationAccountId;
+  PaymentMethod type;
+  double amount;
+  String description;
+  double comision;
+  Transaction? transaction;
 
   Transfer({
     super.id,
     this.transactionId = '',
     this.sourceAccountId = '',
     this.destinationAccountId = '',
-    this.type = TransferType.sameBank,
-    this.amount = 0.0,
+    this.type = PaymentMethod.sameBank,
+    this.amount = 0,
     this.description = '',
-    this.comision = 0.0,
+    this.comision = 0,
     this.transaction,
   });
 
@@ -32,14 +32,11 @@ class Transfer extends Model<Transfer> {
       transactionId: json['transactionId'],
       sourceAccountId: json['source_accountId'],
       destinationAccountId: json['destination_accountId'],
-      type: TransferType.values.firstWhere(
-        (e) => e.name == json['type'],
-        orElse: () => TransferType.sameBank,
-      ),
+      type: enumFromString(json['type'], PaymentMethod.values),
       amount: (double.tryParse(json['amount'].toString()) ?? 0.0),
       description: json['description'],
       comision: (double.tryParse(json['comision'].toString()) ?? 0.0),
-      transaction: Transaction().fromJson(json['transaction']),
+      transaction: safeParse(json['transaction'], Transaction()),
     );
   }
 

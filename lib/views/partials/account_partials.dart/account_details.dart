@@ -1,4 +1,6 @@
 import 'package:banca_movil/models/transfer.dart';
+import 'package:banca_movil/types/transaction_state_type.dart';
+import 'package:banca_movil/types/transaction_type.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:banca_movil/models/account.dart';
@@ -10,9 +12,6 @@ import 'package:banca_movil/views/components/primitives/square_avatar.dart';
 import 'package:banca_movil/views/components/composites/account_card.dart';
 import 'package:banca_movil/views/components/layouts/scroll_layout.dart';
 
-/// Enum para los filtros
-enum TransactionFilter { all, applied, blocked }
-
 class AccountDetails extends StatefulWidget {
   final Account account;
   const AccountDetails({super.key, required this.account});
@@ -23,7 +22,7 @@ class AccountDetails extends StatefulWidget {
 
 class _AccountDetailsState extends State<AccountDetails> {
   late List<TransactionGroup> groups = [];
-  TransactionFilter _filter = TransactionFilter.all;
+  TransactionStateType _filter = TransactionStateType.all;
 
   Future<void> _loadTransactions() async {
     final accountId = widget.account.id;
@@ -96,14 +95,14 @@ class _AccountDetailsState extends State<AccountDetails> {
 class TransactionGroupWidget extends StatelessWidget {
   final TransactionGroup group;
   final bool isRecentGroup;
-  final TransactionFilter filter;
-  final ValueChanged<TransactionFilter>? onFilterChanged;
+  final TransactionStateType filter;
+  final ValueChanged<TransactionStateType>? onFilterChanged;
 
   const TransactionGroupWidget({
     super.key,
     required this.group,
     this.isRecentGroup = false,
-    this.filter = TransactionFilter.all,
+    this.filter = TransactionStateType.all,
     this.onFilterChanged,
   });
 
@@ -112,11 +111,11 @@ class TransactionGroupWidget extends StatelessWidget {
     final filteredItems = isRecentGroup
         ? group.items.where((t) {
             switch (filter) {
-              case TransactionFilter.applied:
-                return t.status == TransactionStatus.applied;
-              case TransactionFilter.blocked:
-                return t.status == TransactionStatus.blocked;
-              case TransactionFilter.all:
+              case TransactionStateType.applied:
+                return t.status == TransactionStateType.applied;
+              case TransactionStateType.blocked:
+                return t.status == TransactionStateType.blocked;
+              case TransactionStateType.all:
                 return true;
             }
           }).toList()
@@ -146,17 +145,17 @@ class TransactionGroupWidget extends StatelessWidget {
                       _buildFilterItem(
                         context,
                         label: "Todas",
-                        value: TransactionFilter.all,
+                        value: TransactionStateType.all,
                       ),
                       _buildFilterItem(
                         context,
                         label: "Aplicadas",
-                        value: TransactionFilter.applied,
+                        value: TransactionStateType.applied,
                       ),
                       _buildFilterItem(
                         context,
                         label: "Bloqueadas",
-                        value: TransactionFilter.blocked,
+                        value: TransactionStateType.blocked,
                       ),
                     ],
                   ),
@@ -174,7 +173,7 @@ class TransactionGroupWidget extends StatelessWidget {
   Widget _buildFilterItem(
     BuildContext context, {
     required String label,
-    required TransactionFilter value,
+    required TransactionStateType value,
   }) {
     return CategorizeItem(
       isSelected: filter == value,
@@ -233,7 +232,7 @@ class TransactionItem extends StatelessWidget {
       ),
       subtitle: isRecent
           ? Text(
-              transaction.status == TransactionStatus.applied
+              transaction.status == TransactionStateType.applied
                   ? "Aplicada"
                   : "Bloqueada",
               maxLines: 1,

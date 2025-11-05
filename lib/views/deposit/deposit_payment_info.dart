@@ -27,7 +27,8 @@ class _DepositPaymentInfoState extends State<DepositPaymentInfo> {
   late TextEditingController _amountController;
   late TextEditingController _descriptionController;
   bool get _areDetailsFieldsEmpty {
-    return _amountController.text.isEmpty || _descriptionController.text.isEmpty;
+    return _amountController.text.isEmpty ||
+        _descriptionController.text.isEmpty;
   }
 
   static const _sectionPadding = EdgeInsets.fromLTRB(16, 8, 16, 4);
@@ -78,7 +79,7 @@ class _DepositPaymentInfoState extends State<DepositPaymentInfo> {
                 ),
               ),
               title: Text(
-                widget.params.sourceAccount.fullName,
+                widget.params.sourceAccount.alias,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               subtitle: Text(widget.params.sourceAccount.accountNumber),

@@ -2,10 +2,14 @@ import 'package:banca_movil/controllers/user_controller.dart';
 import 'package:banca_movil/router.dart';
 import 'package:banca_movil/utils/palette.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp, // Fija en vertical
+  ]);
   runApp(
     ChangeNotifierProvider(
       create: (context) => UserController(),
