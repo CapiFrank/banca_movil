@@ -4,7 +4,6 @@ import 'package:banca_movil/utils/model.dart';
 import 'package:banca_movil/utils/utilities.dart';
 
 class Transaction extends Model<Transaction> {
-  String description;
   TransactionStateType status;
   TransactionType type;
   double amount;
@@ -14,7 +13,6 @@ class Transaction extends Model<Transaction> {
     super.id,
     super.createdAt,
     super.updatedAt,
-    this.description = '',
     this.status = TransactionStateType.blocked,
     this.amount = 0,
     this.currency = '',
@@ -25,7 +23,6 @@ class Transaction extends Model<Transaction> {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'description': description,
       'status': status.name, // almacena "applied" o "blocked"
       'type': type.name, // almacena "income" o "expense"
       'amount': amount,
@@ -39,7 +36,6 @@ class Transaction extends Model<Transaction> {
   Transaction fromJson(Map<String, dynamic> json) {
     return Transaction(
       id: json['id'],
-      description: json['description'],
       status: enumFromString(json['status'], TransactionStateType.values),
       type: enumFromString(json['type'], TransactionType.values),
       amount: (double.tryParse(json['amount'].toString()) ?? 0.0),

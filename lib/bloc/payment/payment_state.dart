@@ -17,6 +17,18 @@ class PaymentInitial extends PaymentState {}
 
 class PaymentLoading extends PaymentState {}
 
+class PaymentLoaded extends PaymentState {
+  final List<Payment> recentPayments;
+  final List<Payment> olderPayments;
+  const PaymentLoaded({
+    required this.recentPayments,
+    required this.olderPayments,
+  });
+
+  @override
+  List<Object?> get props => [recentPayments, olderPayments];
+}
+
 class PaymentSuccess extends PaymentState {}
 
 class PaymentError extends PaymentState {

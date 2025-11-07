@@ -39,6 +39,13 @@ class SetPaymentMethodRequested extends PaymentEvent {
   @override
   List<Object?> get props => [paymentMethod];
 }
+class PaymentRequested extends PaymentEvent {
+  final Account account;
+  const PaymentRequested(this.account);
+
+  @override
+  List<Object?> get props => [account];
+}
 
 class SetSaveFavoriteRequested extends PaymentEvent {
   final bool saveAsFavorite;

@@ -1,6 +1,7 @@
 import 'package:banca_movil/controllers/payment_controller.dart';
 import 'package:banca_movil/models/account.dart';
 import 'package:banca_movil/models/favorite_account.dart';
+import 'package:banca_movil/models/payment.dart';
 import 'package:banca_movil/types/payment_method_type.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -17,6 +18,21 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     on<SetPaymentMethodRequested>(_onPaymentMethodSelected);
     on<SetSaveFavoriteRequested>(_onSaveFavorite);
     on<ConfirmPaymentRequested>(_onConfirmPayment);
+    on<PaymentRequested>(_onRequested);
+  }
+  void _onRequested(PaymentRequested event, Emitter<PaymentState> emit) async {
+    emit(PaymentLoading());
+    try {
+      await controller.index(event.account);
+      emit(
+        PaymentLoaded(
+          recentPayments: controller.recentPayments,
+          olderPayments: controller.olderPayments,
+        ),
+      );
+    } catch (e) {
+      emit(PaymentError(e.toString()));
+    }
   }
 
   void _onSaveFavorite(
